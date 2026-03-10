@@ -801,9 +801,164 @@ body::after {
   .section { padding-left: 0.75rem; padding-right: 0.75rem; }
   .nav { padding: 0 0.75rem; }
 }
+
+/* ============ LOADING SCREEN ============ */
+@keyframes loadGlitch {
+  0% { text-shadow: 0 0 10px #EE2290; }
+  33% { text-shadow: -2px 0 #D4067A, 2px 0 #F967A8; }
+  66% { text-shadow: 2px 0 #EE2290, -2px 0 #D4067A; }
+  100% { text-shadow: 0 0 10px #F967A8; }
+}
+
+/* ============ DECLASSIFIED MODE ============ */
+body.declassified,
+body.declassified .nav,
+body.declassified .hero,
+body.declassified .section,
+body.declassified .footer,
+body.declassified .mobile-overlay {
+  background: #000 !important;
+}
+body.declassified * {
+  font-family: 'JetBrains Mono', monospace !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+body.declassified h1,
+body.declassified h2,
+body.declassified .hero-title,
+body.declassified .section-title,
+body.declassified .nav-logo,
+body.declassified .footer-logo,
+body.declassified .project-name,
+body.declassified .hero-tagline,
+body.declassified .section-label {
+  color: #0f0 !important;
+}
+body.declassified p,
+body.declassified span,
+body.declassified a,
+body.declassified .hero-sub,
+body.declassified .section-desc,
+body.declassified .project-desc,
+body.declassified .project-tagline,
+body.declassified .footer-tagline,
+body.declassified .footer-links a,
+body.declassified .nav-links a,
+body.declassified .flow-node,
+body.declassified .brand-stat-label,
+body.declassified .brand-stat-value,
+body.declassified .project-cta,
+body.declassified .project-tech span,
+body.declassified .flow-sub,
+body.declassified .wildcard-title,
+body.declassified .wildcard-desc,
+body.declassified .hero-badge,
+body.declassified .github-cta,
+body.declassified .footer-copy {
+  color: #0a0 !important;
+}
+body.declassified canvas {
+  filter: grayscale(1) !important;
+}
+body.declassified .project-card,
+body.declassified .brand-stat,
+body.declassified .flow-node,
+body.declassified .wildcard-section {
+  border-color: #0a0 !important;
+  background: #000 !important;
+}
+body.declassified .section-divider {
+  background: #0a0 !important;
+}
+body.declassified .nav-project {
+  border-color: #0a0 !important;
+  color: #0f0 !important;
+}
+body.declassified .project-card::before,
+body.declassified .project-card::after {
+  display: none !important;
+}
+body.declassified .cursor-glow { display: none !important; }
+body.declassified::after { display: none !important; }
+
+/* ============ COMMAND PALETTE ============ */
+#commandPalette {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(12px);
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 20vh;
+}
+#commandPalette.open { display: flex; }
+#commandPaletteInner {
+  background: var(--bg-surface);
+  border: 1px solid var(--rose-muted);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(212,6,122,0.2);
+}
+#commandInput {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: var(--bg-raised);
+  border: none;
+  border-bottom: 1px solid var(--rose-dim);
+  color: var(--rose-white);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  outline: none;
+  caret-color: var(--rose-bright);
+}
+#commandInput::placeholder { color: var(--rose-muted); }
+#commandList { list-style: none; max-height: 320px; overflow-y: auto; }
+#commandList li {
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--rose-hot);
+  transition: background 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+#commandList li:hover,
+#commandList li.active {
+  background: rgba(212,6,122,0.12);
+  color: var(--rose-white);
+}
+#commandList li .cmd-key {
+  font-size: 0.6rem;
+  color: var(--rose-muted);
+  margin-left: auto;
+}
+
+/* ============ PORTAL EFFECT ============ */
+body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
+@keyframes portalWarp {
+  0% { transform: scale(1); filter: brightness(1) blur(0); opacity: 1; }
+  50% { transform: scale(0.98); filter: brightness(2) blur(2px); opacity: 0.8; }
+  100% { transform: scale(0.95) translateY(-20px); filter: brightness(3) blur(8px); opacity: 0; }
+}
 </style>
 </head>
 <body>
+
+<!-- Loading Screen -->
+<div id="loadingScreen" style="position:fixed;inset:0;z-index:99999;background:#0F060A;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.5s,visibility 0.5s">
+  <div style="font-family:'Orbitron',monospace;font-size:clamp(2rem,5vw,3.5rem);color:#D4067A;letter-spacing:0.3em;animation:loadGlitch 0.15s infinite">THE SUITE</div>
+  <div style="width:200px;height:2px;background:#19060E;margin-top:1.5rem;border-radius:1px;overflow:hidden">
+    <div id="loadBar" style="width:0%;height:100%;background:linear-gradient(90deg,#D4067A,#EE2290);transition:width 0.3s"></div>
+  </div>
+</div>
 
 <!-- Scroll Progress Bar -->
 <div id="scrollProgress"></div>
@@ -824,6 +979,7 @@ body::after {
     <li><a href="https://emperorbadussy.github.io/aether/" class="nav-project aether" target="_blank">AETHER</a></li>
     <li><a href="https://emperorbadussy.github.io/charon/" class="nav-project charon" target="_blank">CHARON</a></li>
     <li><a href="https://emperorbadussy.github.io/faceless/" class="nav-project faceless">FACELESS</a></li>
+    <li><button id="declassifiedToggle" title="DECLASSIFIED MODE" style="background:none;border:1px solid var(--rose-muted,#64102E);color:var(--rose-core,#D4067A);font-family:'JetBrains Mono',monospace;font-size:0.7rem;padding:0.3rem 0.6rem;cursor:pointer;letter-spacing:0.1em;transition:all 0.3s;border-radius:2px">[CLASSIFIED]</button></li>
   </ul>
   <button class="menu-toggle" id="menuToggle" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -998,6 +1154,14 @@ body::after {
     </div>
   </div>
 </section>
+
+<!-- Command Palette -->
+<div id="commandPalette">
+  <div id="commandPaletteInner">
+    <input id="commandInput" type="text" placeholder="Type a command..." autocomplete="off" spellcheck="false">
+    <ul id="commandList"></ul>
+  </div>
+</div>
 
 <!-- Footer Pattern -->
 <div class="footer-pattern"></div>
@@ -1759,6 +1923,143 @@ document.addEventListener('click', function(e) {
     requestAnimationFrame(drawTrail);
   }
   drawTrail();
+})();
+
+// ============ LOADING SCREEN ============
+(function() {
+  var loadBar = document.getElementById('loadBar');
+  var screen = document.getElementById('loadingScreen');
+  var progress = 0;
+  var interval = setInterval(function() {
+    progress += Math.random() * 25 + 10;
+    if (progress > 100) progress = 100;
+    loadBar.style.width = progress + '%';
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(function() {
+        screen.style.opacity = '0';
+        screen.style.visibility = 'hidden';
+        setTimeout(function() { screen.remove(); }, 500);
+      }, 300);
+    }
+  }, 200);
+})();
+
+// ============ DECLASSIFIED MODE ============
+(function() {
+  var btn = document.getElementById('declassifiedToggle');
+  if (!btn) return;
+  btn.addEventListener('click', function() {
+    document.body.classList.toggle('declassified');
+    btn.textContent = document.body.classList.contains('declassified') ? '[DECLASSIFIED]' : '[CLASSIFIED]';
+  });
+})();
+
+// ============ COMMAND PALETTE ============
+(function() {
+  var palette = document.getElementById('commandPalette');
+  var input = document.getElementById('commandInput');
+  var list = document.getElementById('commandList');
+
+  var commands = [
+    { name: 'Go to Top', action: function() { window.scrollTo({ top: 0, behavior: 'smooth' }); } },
+    { name: 'Projects', action: function() { document.getElementById('hero').scrollIntoView({ behavior: 'smooth' }); } },
+    { name: 'Ecosystem', action: function() { document.getElementById('ecosystem').scrollIntoView({ behavior: 'smooth' }); } },
+    { name: 'Toggle Declassified Mode', action: function() { var b = document.getElementById('declassifiedToggle'); if (b) b.click(); } },
+    { name: 'Visit AETHER', action: function() { portalNavigate('https://emperorbadussy.github.io/aether/'); } },
+    { name: 'Visit CHARON', action: function() { portalNavigate('https://emperorbadussy.github.io/charon/'); } },
+    { name: 'Visit FACELESS', action: function() { portalNavigate('https://emperorbadussy.github.io/faceless/'); } },
+    { name: 'GitHub', action: function() { window.open('https://github.com/EmperorBadussy', '_blank'); } }
+  ];
+
+  var activeIdx = 0;
+
+  function render(filter) {
+    var f = (filter || '').toLowerCase();
+    var filtered = commands.filter(function(c) { return c.name.toLowerCase().indexOf(f) > -1; });
+    list.innerHTML = '';
+    filtered.forEach(function(c, i) {
+      var li = document.createElement('li');
+      li.textContent = c.name;
+      if (i === 0) li.classList.add('active');
+      li.addEventListener('click', function() { c.action(); closePalette(); });
+      li.addEventListener('mouseenter', function() {
+        list.querySelectorAll('li').forEach(function(el) { el.classList.remove('active'); });
+        li.classList.add('active');
+        activeIdx = i;
+      });
+      list.appendChild(li);
+    });
+    activeIdx = 0;
+    return filtered;
+  }
+
+  function openPalette() {
+    palette.classList.add('open');
+    input.value = '';
+    render('');
+    setTimeout(function() { input.focus(); }, 50);
+  }
+
+  function closePalette() {
+    palette.classList.remove('open');
+    input.value = '';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      if (palette.classList.contains('open')) closePalette();
+      else openPalette();
+    }
+    if (!palette.classList.contains('open')) return;
+    if (e.key === 'Escape') { closePalette(); return; }
+    var items = list.querySelectorAll('li');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIdx = Math.min(activeIdx + 1, items.length - 1);
+      items.forEach(function(el) { el.classList.remove('active'); });
+      if (items[activeIdx]) items[activeIdx].classList.add('active');
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIdx = Math.max(activeIdx - 1, 0);
+      items.forEach(function(el) { el.classList.remove('active'); });
+      if (items[activeIdx]) items[activeIdx].classList.add('active');
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (items[activeIdx]) items[activeIdx].click();
+    }
+  });
+
+  input.addEventListener('input', function() {
+    render(input.value);
+  });
+
+  palette.addEventListener('click', function(e) {
+    if (e.target === palette) closePalette();
+  });
+})();
+
+// ============ PORTAL TRANSITION ============
+function portalNavigate(url) {
+  document.body.classList.add('portal-out');
+  setTimeout(function() { window.location.href = url; }, 600);
+}
+(function() {
+  var suiteHosts = ['emperorbadussy.github.io/aether', 'emperorbadussy.github.io/charon', 'emperorbadussy.github.io/faceless'];
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    var href = link.getAttribute('href');
+    if (!href) return;
+    var isSuite = suiteHosts.some(function(h) { return href.indexOf(h) > -1; });
+    if (isSuite) {
+      e.preventDefault();
+      portalNavigate(href);
+    }
+  });
 })();
 </script>
 </body>

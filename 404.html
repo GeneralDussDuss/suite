@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — SIGNAL LOST</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0F060A;
+  color: #FFECF3;
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+canvas#static {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.08;
+  z-index: 0;
+}
+.container {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 2rem;
+}
+.glitch-404 {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: clamp(6rem, 20vw, 14rem);
+  color: #D4067A;
+  text-shadow: 0 0 20px rgba(212,6,122,0.6), 0 0 60px rgba(212,6,122,0.3);
+  position: relative;
+  animation: glitch404 3s infinite;
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
+@keyframes glitch404 {
+  0%, 100% { text-shadow: 0 0 20px rgba(212,6,122,0.6), 0 0 60px rgba(212,6,122,0.3); clip-path: none; }
+  2% { text-shadow: -3px 0 #EE2290, 3px 0 #F967A8; clip-path: inset(30% 0 40% 0); }
+  4% { text-shadow: 3px 0 #F967A8, -3px 0 #D4067A; clip-path: inset(60% 0 10% 0); }
+  6% { text-shadow: 0 0 20px rgba(212,6,122,0.6); clip-path: none; }
+  50% { text-shadow: 0 0 20px rgba(212,6,122,0.6); clip-path: none; }
+  52% { text-shadow: -2px 0 #EE2290, 2px 0 #F967A8; clip-path: inset(10% 0 70% 0); }
+  53% { text-shadow: 2px 0 #D4067A, -2px 0 #EE2290; clip-path: inset(50% 0 20% 0); }
+  55% { text-shadow: 0 0 20px rgba(212,6,122,0.6); clip-path: none; }
+}
+.subtitle {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1rem, 3vw, 1.8rem);
+  color: #EE2290;
+  letter-spacing: 0.3em;
+  margin-top: 1rem;
+  text-shadow: 0 0 10px rgba(238,34,144,0.5);
+  animation: subtitleFlicker 4s ease-in-out infinite;
+}
+@keyframes subtitleFlicker {
+  0%, 100% { opacity: 1; }
+  48% { opacity: 1; }
+  50% { opacity: 0.4; }
+  52% { opacity: 1; }
+  80% { opacity: 1; }
+  81% { opacity: 0.6; }
+  82% { opacity: 1; }
+}
+.desc {
+  font-size: 0.85rem;
+  color: #64102E;
+  margin-top: 1.5rem;
+  letter-spacing: 0.08em;
+}
+.home-link {
+  display: inline-block;
+  margin-top: 2.5rem;
+  padding: 0.7rem 2rem;
+  border: 1px solid #D4067A;
+  color: #F967A8;
+  text-decoration: none;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  transition: all 0.3s;
+  border-radius: 4px;
+}
+.home-link:hover {
+  background: rgba(212,6,122,0.15);
+  color: #FFECF3;
+  box-shadow: 0 0 20px rgba(212,6,122,0.3), 0 0 60px rgba(212,6,122,0.1);
+  border-color: #EE2290;
+}
+.scanline {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+}
+</style>
+</head>
+<body>
+<canvas id="static"></canvas>
+<div class="scanline"></div>
+<div class="container">
+  <div class="glitch-404">404</div>
+  <div class="subtitle">SIGNAL LOST</div>
+  <div class="desc">The requested frequency does not exist in this dimension.</div>
+  <a href="./" class="home-link">RETURN TO BASE</a>
+</div>
+<script>
+(function() {
+  var canvas = document.getElementById('static');
+  var ctx = canvas.getContext('2d');
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  function drawStatic() {
+    var imageData = ctx.createImageData(canvas.width, canvas.height);
+    var data = imageData.data;
+    for (var i = 0; i < data.length; i += 4) {
+      var v = Math.random() * 255;
+      data[i] = v;
+      data[i + 1] = v;
+      data[i + 2] = v;
+      data[i + 3] = 255;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    requestAnimationFrame(drawStatic);
+  }
+  drawStatic();
+})();
+</script>
+</body>
+</html>
