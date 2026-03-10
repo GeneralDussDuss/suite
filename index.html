@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>THE SUITE — Three Tools. One Ecosystem.</title>
-<meta name="description" content="AETHER. CHARON. FACELESS. Three tools forged in the void. One ecosystem. Zero compromise.">
+<meta name="description" content="AETHER. CHARON. HYDRA. Three tools forged in the void. One ecosystem. Zero compromise.">
 <meta property="og:title" content="THE SUITE — Three Tools. One Ecosystem.">
-<meta property="og:description" content="AETHER. CHARON. FACELESS. Three tools forged in the void. One ecosystem. Zero compromise.">
+<meta property="og:description" content="AETHER. CHARON. HYDRA. Three tools forged in the void. One ecosystem. Zero compromise.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://emperorbadussy.github.io/suite/">
 <meta name="twitter:card" content="summary">
@@ -49,6 +49,9 @@
   --amber-bright: #EED322;
   --amber-vivid: #F9E867;
   --amber-core: #D4A006;
+  --green-bright: #22C55E;
+  --green-vivid: #4ADE80;
+  --green-core: #16A34A;
   --glow-subtle: 0 0 10px rgba(238,34,144,0.15);
   --glow-medium: 0 0 20px rgba(238,34,144,0.25), 0 0 40px rgba(212,6,122,0.15);
   --glow-intense: 0 0 20px rgba(238,34,144,0.4), 0 0 60px rgba(212,6,122,0.25), 0 0 100px rgba(212,6,122,0.1);
@@ -188,6 +191,9 @@ body::after {
 .nav-project.faceless { border-color: var(--amber-bright); color: var(--amber-vivid) !important; }
 .nav-project.faceless:hover { background: rgba(212,160,6,0.15); box-shadow: 0 0 12px rgba(238,211,34,0.3); }
 .nav-project.faceless::after { display: none !important; }
+.nav-project.hydra { border-color: var(--green-bright); color: var(--green-vivid) !important; }
+.nav-project.hydra:hover { background: rgba(22,163,74,0.15); box-shadow: 0 0 12px rgba(34,197,94,0.3); }
+.nav-project.hydra::after { display: none !important; }
 
 .menu-toggle {
   display: none; flex-direction: column; gap: 5px;
@@ -375,6 +381,20 @@ body::after {
   box-shadow: 0 0 30px rgba(238,211,34,0.4), 0 0 80px rgba(212,160,6,0.2), 0 25px 80px rgba(0,0,0,0.6), inset 0 0 30px rgba(212,160,6,0.1);
 }
 
+/* HYDRA card */
+.project-card.hydra { border-color: rgba(22,163,74,0.3); }
+.project-card.hydra::before {
+  background: conic-gradient(from var(--angle), transparent 30%, var(--green-bright), var(--green-vivid), transparent 70%);
+  animation: rotateBorder 3s linear infinite;
+}
+.project-card.hydra::after {
+  background: radial-gradient(circle, rgba(22,163,74,0.08) 0%, transparent 60%);
+}
+.project-card.hydra:hover {
+  border-color: var(--green-bright);
+  box-shadow: 0 0 30px rgba(34,197,94,0.4), 0 0 80px rgba(22,163,74,0.2), 0 25px 80px rgba(0,0,0,0.6), inset 0 0 30px rgba(22,163,74,0.1);
+}
+
 .project-icon {
   width: 64px; height: 64px; border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
@@ -386,10 +406,13 @@ body::after {
 .project-card.charon:hover .project-icon { box-shadow: 0 0 25px rgba(34,211,238,0.5); border-color: var(--cyan-bright); transform: scale(1.1); }
 .project-card.faceless .project-icon { background: rgba(212,160,6,0.15); border-color: rgba(212,160,6,0.3); }
 .project-card.faceless:hover .project-icon { box-shadow: 0 0 25px rgba(238,211,34,0.5); border-color: var(--amber-bright); transform: scale(1.1); }
+.project-card.hydra .project-icon { background: rgba(22,163,74,0.15); border-color: rgba(22,163,74,0.3); }
+.project-card.hydra:hover .project-icon { box-shadow: 0 0 25px rgba(34,197,94,0.5); border-color: var(--green-bright); transform: scale(1.1); }
 .project-icon svg { width: 30px; height: 30px; fill: none; stroke-width: 1.5; }
 .project-card.aether .project-icon svg { stroke: var(--purple-vivid); }
 .project-card.charon .project-icon svg { stroke: var(--cyan-vivid); }
 .project-card.faceless .project-icon svg { stroke: var(--amber-vivid); }
+.project-card.hydra .project-icon svg { stroke: var(--green-vivid); }
 
 .project-name {
   font-family: var(--font-display); font-weight: 700; font-size: 1.3rem;
@@ -401,6 +424,8 @@ body::after {
 .project-card.charon:hover .project-name { text-shadow: 0 0 12px rgba(103,232,249,0.8), 0 0 30px rgba(103,232,249,0.3); }
 .project-card.faceless .project-name { color: var(--amber-vivid); text-shadow: 0 0 8px rgba(249,232,103,0.5); }
 .project-card.faceless:hover .project-name { text-shadow: 0 0 12px rgba(249,232,103,0.8), 0 0 30px rgba(249,232,103,0.3); }
+.project-card.hydra .project-name { color: var(--green-vivid); text-shadow: 0 0 8px rgba(74,222,128,0.5); }
+.project-card.hydra:hover .project-name { text-shadow: 0 0 12px rgba(74,222,128,0.8), 0 0 30px rgba(74,222,128,0.3); }
 
 .project-tagline {
   font-family: var(--font-display); font-weight: 500; font-size: 0.7rem;
@@ -409,6 +434,7 @@ body::after {
 .project-card.aether .project-tagline { color: var(--purple-vivid); }
 .project-card.charon .project-tagline { color: var(--cyan-vivid); }
 .project-card.faceless .project-tagline { color: var(--amber-vivid); }
+.project-card.hydra .project-tagline { color: var(--green-vivid); }
 
 .project-desc {
   font-family: var(--font-body); font-size: 0.9rem; line-height: 1.5;
@@ -430,6 +456,8 @@ body::after {
 .project-card.charon:hover .project-tech span { color: rgba(103,232,249,1); border-color: rgba(6,182,212,0.5); background: rgba(6,182,212,0.1); }
 .project-card.faceless .project-tech span { color: rgba(249,232,103,0.7); border-color: rgba(212,160,6,0.2); }
 .project-card.faceless:hover .project-tech span { color: rgba(249,232,103,1); border-color: rgba(212,160,6,0.5); background: rgba(212,160,6,0.1); }
+.project-card.hydra .project-tech span { color: rgba(74,222,128,0.7); border-color: rgba(22,163,74,0.2); }
+.project-card.hydra:hover .project-tech span { color: rgba(74,222,128,1); border-color: rgba(22,163,74,0.5); background: rgba(22,163,74,0.1); }
 
 .project-cta {
   font-family: var(--font-display); font-weight: 600; font-size: 0.65rem;
@@ -443,6 +471,8 @@ body::after {
 .project-card.charon:hover .project-cta { background: rgba(6,182,212,0.2); box-shadow: 0 0 12px rgba(34,211,238,0.3); }
 .project-card.faceless .project-cta { color: var(--amber-vivid); border-color: var(--amber-bright); }
 .project-card.faceless:hover .project-cta { background: rgba(212,160,6,0.2); box-shadow: 0 0 12px rgba(238,211,34,0.3); }
+.project-card.hydra .project-cta { color: var(--green-vivid); border-color: var(--green-bright); }
+.project-card.hydra:hover .project-cta { background: rgba(22,163,74,0.2); box-shadow: 0 0 12px rgba(34,197,94,0.3); }
 
 .scroll-indicator {
   position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
@@ -536,6 +566,12 @@ body::after {
   box-shadow: 0 0 15px rgba(238,211,34,0.1);
 }
 .flow-node.faceless:hover { box-shadow: 0 0 25px rgba(238,211,34,0.35); }
+.flow-node.hydra {
+  border-color: var(--green-bright); color: var(--green-vivid);
+  background: rgba(22,163,74,0.08);
+  box-shadow: 0 0 15px rgba(34,197,94,0.1);
+}
+.flow-node.hydra:hover { box-shadow: 0 0 25px rgba(34,197,94,0.35); }
 
 /* Animated SVG arrows */
 .flow-arrow-svg {
@@ -581,37 +617,63 @@ body::after {
 }
 
 .wildcard-section {
-  margin-top: 3rem;
+  margin-top: 2rem;
   padding: 1.5rem 2rem;
-  border: 1px solid var(--amber-core);
+  border: 1px solid;
   border-radius: 12px;
-  background: rgba(212,160,6,0.04);
   display: flex;
   align-items: center;
   gap: 1.5rem;
   transition: var(--transition-normal);
-  animation: wildcardPulse 4s ease-in-out infinite;
 }
-@keyframes wildcardPulse {
+.wildcard-section.amber-wildcard {
+  border-color: var(--amber-core);
+  background: rgba(212,160,6,0.04);
+  animation: wildcardPulseAmber 4s ease-in-out infinite;
+}
+@keyframes wildcardPulseAmber {
   0%, 100% { border-color: var(--amber-core); box-shadow: 0 0 10px rgba(212,160,6,0.05); }
   50% { border-color: var(--amber-bright); box-shadow: 0 0 25px rgba(212,160,6,0.15), 0 0 50px rgba(212,160,6,0.05); }
 }
-.wildcard-section:hover {
+.wildcard-section.amber-wildcard:hover {
   box-shadow: 0 0 40px rgba(212,160,6,0.2);
   border-color: var(--amber-bright);
   animation: none;
 }
+.wildcard-section.green-wildcard {
+  border-color: var(--green-core);
+  background: rgba(22,163,74,0.04);
+  animation: wildcardPulseGreen 4s ease-in-out infinite;
+}
+@keyframes wildcardPulseGreen {
+  0%, 100% { border-color: var(--green-core); box-shadow: 0 0 10px rgba(22,163,74,0.05); }
+  50% { border-color: var(--green-bright); box-shadow: 0 0 25px rgba(34,197,94,0.15), 0 0 50px rgba(34,197,94,0.05); }
+}
+.wildcard-section.green-wildcard:hover {
+  box-shadow: 0 0 40px rgba(34,197,94,0.2);
+  border-color: var(--green-bright);
+  animation: none;
+}
 .wildcard-icon {
   width: 48px; height: 48px; border-radius: 10px;
-  background: rgba(212,160,6,0.15); border: 1px solid rgba(212,160,6,0.3);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.wildcard-icon svg { width: 24px; height: 24px; stroke: var(--amber-vivid); fill: none; stroke-width: 1.5; }
+.wildcard-icon svg { width: 24px; height: 24px; fill: none; stroke-width: 1.5; }
+.amber-wildcard .wildcard-icon {
+  background: rgba(212,160,6,0.15); border: 1px solid rgba(212,160,6,0.3);
+}
+.amber-wildcard .wildcard-icon svg { stroke: var(--amber-vivid); }
+.green-wildcard .wildcard-icon {
+  background: rgba(22,163,74,0.15); border: 1px solid rgba(22,163,74,0.3);
+}
+.green-wildcard .wildcard-icon svg { stroke: var(--green-vivid); }
 .wildcard-text { flex: 1; }
 .wildcard-title {
   font-family: var(--font-display); font-weight: 600; font-size: 0.85rem;
-  color: var(--amber-vivid); letter-spacing: 0.08em; margin-bottom: 0.3rem;
+  letter-spacing: 0.08em; margin-bottom: 0.3rem;
 }
+.amber-wildcard .wildcard-title { color: var(--amber-vivid); }
+.green-wildcard .wildcard-title { color: var(--green-vivid); }
 .wildcard-desc {
   font-family: var(--font-body); font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.4;
 }
@@ -760,6 +822,8 @@ body::after {
 .footer-links a.cyan:hover { color: #a5f3fc; text-shadow: 0 0 12px rgba(103,232,249,0.7), 0 0 30px rgba(103,232,249,0.3); }
 .footer-links a.amber { color: var(--amber-vivid); }
 .footer-links a.amber:hover { color: #fef08a; text-shadow: 0 0 12px rgba(249,232,103,0.7), 0 0 30px rgba(249,232,103,0.3); }
+.footer-links a.green { color: var(--green-vivid); }
+.footer-links a.green:hover { color: #bbf7d0; text-shadow: 0 0 12px rgba(74,222,128,0.7), 0 0 30px rgba(74,222,128,0.3); }
 .footer-copy {
   width: 100%; text-align: center;
   font-family: var(--font-mono); font-size: 0.65rem;
@@ -776,6 +840,9 @@ body::after {
 }
 
 /* ============ RESPONSIVE ============ */
+@media (max-width: 1200px) {
+  .projects-grid { grid-template-columns: repeat(2, 1fr); max-width: 700px; }
+}
 @media (max-width: 1024px) {
   .projects-grid { grid-template-columns: 1fr; max-width: 500px; }
   .brand-grid { grid-template-columns: 1fr 1fr 1fr; }
@@ -978,7 +1045,7 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
     <li><a href="#ecosystem">Ecosystem</a></li>
     <li><a href="https://emperorbadussy.github.io/aether/" class="nav-project aether" target="_blank">AETHER</a></li>
     <li><a href="https://emperorbadussy.github.io/charon/" class="nav-project charon" target="_blank">CHARON</a></li>
-    <li><a href="https://emperorbadussy.github.io/faceless/" class="nav-project faceless">FACELESS</a></li>
+    <li><a href="https://emperorbadussy.github.io/hydra/" class="nav-project hydra" target="_blank">HYDRA</a></li>
     <li><button id="declassifiedToggle" title="DECLASSIFIED MODE" style="background:none;border:1px solid var(--rose-muted,#64102E);color:var(--rose-core,#D4067A);font-family:'JetBrains Mono',monospace;font-size:0.7rem;padding:0.3rem 0.6rem;cursor:pointer;letter-spacing:0.1em;transition:all 0.3s;border-radius:2px">[CLASSIFIED]</button></li>
   </ul>
   <button class="menu-toggle" id="menuToggle" aria-label="Menu">
@@ -990,7 +1057,7 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
   <a href="#ecosystem" onclick="closeMobile()">ECOSYSTEM</a>
   <a href="https://emperorbadussy.github.io/aether/" style="color:var(--purple-vivid)" target="_blank" onclick="closeMobile()">AETHER</a>
   <a href="https://emperorbadussy.github.io/charon/" style="color:var(--cyan-vivid)" target="_blank" onclick="closeMobile()">CHARON</a>
-  <a href="https://emperorbadussy.github.io/faceless/" style="color:var(--amber-vivid)" onclick="closeMobile()">FACELESS</a>
+  <a href="https://emperorbadussy.github.io/hydra/" style="color:var(--green-vivid)" target="_blank" onclick="closeMobile()">HYDRA</a>
 </div>
 
 <!-- ============ HERO ============ -->
@@ -999,7 +1066,7 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
   <div class="hero-content">
     <div class="hero-badge">
       <span class="dot"></span>
-      AETHER &bull; CHARON &bull; FACELESS
+      AETHER &bull; CHARON &bull; HYDRA
     </div>
     <h1 class="hero-title" id="heroTitle"></h1>
     <p class="hero-tagline">Three tools. One ecosystem. Zero compromise.</p>
@@ -1042,22 +1109,22 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
         <div class="project-cta">EXPLORE CHARON</div>
       </a>
 
-      <!-- FACELESS -->
-      <a href="https://emperorbadussy.github.io/faceless/" class="project-card faceless">
-        <canvas class="card-canvas" data-type="faceless"></canvas>
+      <!-- HYDRA -->
+      <a href="https://emperorbadussy.github.io/hydra/" class="project-card hydra" target="_blank">
+        <canvas class="card-canvas" data-type="hydra"></canvas>
         <div class="project-icon">
-          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="8" y1="7" x2="16" y2="7" opacity="0.3"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2C12 2 8 6 8 10c0 2 1 3 2 4l-3 3c-1 1-1 2 0 3s2 1 3 0l3-3 3 3c1 1 2 1 3 0s1-2 0-3l-3-3c1-1 2-2 2-4 0-4-4-8-4-8z"/><circle cx="10" cy="10" r="1.5" opacity="0.7"/><circle cx="14" cy="10" r="1.5" opacity="0.7"/></svg>
         </div>
-        <div class="project-name">FACELESS</div>
-        <div class="project-tagline">Real-Time Face Swap Engine</div>
-        <div class="project-desc">GPU-accelerated face swapping at 30fps+. CUDA-optimized pipeline with Electron UI and virtual camera output. Become anyone.</div>
+        <div class="project-name">HYDRA</div>
+        <div class="project-tagline">Cut off one head. Two more grow back.</div>
+        <div class="project-desc">Self-healing streaming video ripper with hot-swappable service modules. Multi-headed. Unstoppable.</div>
         <div class="project-tech">
-          <span>ONNX CUDA</span>
-          <span>React 19</span>
-          <span>Electron</span>
-          <span>WebSockets</span>
+          <span>Python</span>
+          <span>yt-dlp</span>
+          <span>Modular</span>
+          <span>Self-Healing</span>
         </div>
-        <div class="project-cta">EXPLORE FACELESS</div>
+        <div class="project-cta">EXPLORE HYDRA</div>
       </a>
     </div>
   </div>
@@ -1074,7 +1141,7 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
   <div class="section-inner" style="text-align:center;">
     <div class="section-label reveal" style="justify-content:center;">01 // THE ECOSYSTEM</div>
     <h2 class="section-title reveal" style="margin-left:auto;margin-right:auto;">How They Connect</h2>
-    <p class="section-desc reveal" style="margin-left:auto;margin-right:auto;">The music pipeline flows from source to speakers. CHARON harvests. Navidrome stores. AETHER plays. FACELESS stands alone &mdash; the wildcard.</p>
+    <p class="section-desc reveal" style="margin-left:auto;margin-right:auto;">The music pipeline flows from source to speakers. CHARON harvests. Navidrome stores. AETHER plays. HYDRA stands alone &mdash; the wildcard that devours streams.</p>
 
     <div class="flow-diagram-wrapper reveal">
       <canvas id="flowCanvas"></canvas>
@@ -1108,13 +1175,13 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
       </div>
     </div>
 
-    <div class="wildcard-section reveal">
+    <div class="wildcard-section green-wildcard reveal">
       <div class="wildcard-icon">
-        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2C12 2 8 6 8 10c0 2 1 3 2 4l-3 3c-1 1-1 2 0 3s2 1 3 0l3-3 3 3c1 1 2 1 3 0s1-2 0-3l-3-3c1-1 2-2 2-4 0-4-4-8-4-8z"/></svg>
       </div>
       <div class="wildcard-text" style="text-align:left;">
-        <div class="wildcard-title">FACELESS &mdash; THE WILDCARD</div>
-        <div class="wildcard-desc">Not part of the music pipeline. FACELESS stands alone as a real-time GPU face swap engine. Different domain, same engineering philosophy. Same OLED-dark aesthetic. Same relentless performance focus.</div>
+        <div class="wildcard-title">HYDRA &mdash; THE WILDCARD</div>
+        <div class="wildcard-desc">Not part of the music pipeline. HYDRA is a self-healing streaming video ripper with hot-swappable service modules. Cut off one head, two more grow back. Different domain, same relentless engineering.</div>
       </div>
     </div>
   </div>
@@ -1176,7 +1243,7 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
     <ul class="footer-links">
       <li><a href="https://emperorbadussy.github.io/aether/" class="purple" target="_blank">AETHER</a></li>
       <li><a href="https://emperorbadussy.github.io/charon/" class="cyan" target="_blank">CHARON</a></li>
-      <li><a href="https://emperorbadussy.github.io/faceless/" class="amber">FACELESS</a></li>
+      <li><a href="https://emperorbadussy.github.io/hydra/" class="green" target="_blank">HYDRA</a></li>
       <li><a href="https://github.com/EmperorBadussy" target="_blank">GitHub</a></li>
     </ul>
     <div class="footer-copy">&copy; 2077 THE SUITE. All projects free and open source.</div>
@@ -1279,7 +1346,7 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
     hubs = [
       { x: w * 0.25, y: h * 0.4, color: [157, 78, 221], label: 'AETHER' },
       { x: w * 0.5, y: h * 0.55, color: [34, 211, 238], label: 'CHARON' },
-      { x: w * 0.75, y: h * 0.4, color: [238, 211, 34], label: 'FACELESS' }
+      { x: w * 0.75, y: h * 0.4, color: [34, 197, 94], label: 'HYDRA' }
     ];
   }
   resize();
@@ -1352,14 +1419,14 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
     // Spawn waves
     if (time - lastWaveTime > 3000) {
       lastWaveTime = time;
-      spawnWave(hubs[Math.floor(Math.random() * 3)]);
+      spawnWave(hubs[Math.floor(Math.random() * hubs.length)]);
     }
 
     // Spawn lightning
     if (time - lastLightningTime > 5000 + Math.random() * 4000) {
       lastLightningTime = time;
-      var a = Math.floor(Math.random() * 3);
-      var b = (a + 1 + Math.floor(Math.random() * 2)) % 3;
+      var a = Math.floor(Math.random() * hubs.length);
+      var b = (a + 1 + Math.floor(Math.random() * (hubs.length - 1))) % hubs.length;
       spawnLightning(hubs[a], hubs[b]);
     }
 
@@ -1601,70 +1668,41 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
       })(0);
     }
 
-    if (type === 'faceless') {
-      // Rotating face mesh wireframe
-      var facePoints = [];
-      // Generate an oval of points
-      for (var i = 0; i < 24; i++) {
-        var ang = (i / 24) * Math.PI * 2;
-        facePoints.push({ bx: Math.cos(ang) * 0.35, by: Math.sin(ang) * 0.45 });
+    if (type === 'hydra') {
+      // Multi-headed snake/hydra tendrils
+      var heads = [];
+      for (var i = 0; i < 5; i++) {
+        heads.push({
+          baseX: 0.2 + Math.random() * 0.6,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.001 + Math.random() * 0.002,
+          amp: 0.05 + Math.random() * 0.1,
+          alpha: 0.06 + Math.random() * 0.06
+        });
       }
-      // Inner features
-      var innerPts = [
-        { bx: -0.12, by: -0.1 }, { bx: 0.12, by: -0.1 }, // eyes
-        { bx: 0, by: 0.02 }, // nose
-        { bx: -0.08, by: 0.14 }, { bx: 0.08, by: 0.14 }, { bx: 0, by: 0.17 } // mouth
-      ];
-      facePoints = facePoints.concat(innerPts);
-
-      var rotation = 0;
       (function draw(t) {
         var cw = canvas.width, ch = canvas.height;
         ctx.clearRect(0, 0, cw, ch);
-        rotation = t * 0.0003;
-        var cx = cw / 2, cy = ch / 2;
-        var scale = Math.min(cw, ch) * 0.8;
-
-        var projected = facePoints.map(function(p) {
-          // Rotate around Y axis
-          var x3 = p.bx * Math.cos(rotation);
-          var z3 = p.bx * Math.sin(rotation);
-          var depth = 1 / (1 + z3 * 0.5);
-          return { x: cx + x3 * scale * depth, y: cy + p.by * scale * depth, d: depth };
-        });
-
-        // Outer ring
-        ctx.beginPath();
-        for (var i = 0; i < 24; i++) {
-          var p = projected[i];
-          if (i === 0) ctx.moveTo(p.x, p.y);
-          else ctx.lineTo(p.x, p.y);
-        }
-        ctx.closePath();
-        ctx.strokeStyle = 'rgba(238,211,34,0.08)';
-        ctx.lineWidth = 0.8;
-        ctx.stroke();
-
-        // Cross lines
-        for (var i = 0; i < 24; i += 3) {
-          for (var j = 24; j < projected.length; j++) {
-            ctx.beginPath();
-            ctx.moveTo(projected[i].x, projected[i].y);
-            ctx.lineTo(projected[j].x, projected[j].y);
-            ctx.strokeStyle = 'rgba(249,232,103,0.04)';
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-
-        // Inner points
-        for (var i = 24; i < projected.length; i++) {
+        heads.forEach(function(h) {
           ctx.beginPath();
-          ctx.arc(projected[i].x, projected[i].y, 1.5 * projected[i].d, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(238,211,34,0.12)';
+          var startX = h.baseX * cw;
+          ctx.moveTo(startX, ch);
+          for (var y = ch; y > ch * 0.15; y -= 4) {
+            var progress = 1 - y / ch;
+            var x = startX + Math.sin(t * h.speed + h.phase + progress * 6) * cw * h.amp * progress;
+            ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = 'rgba(34,197,94,' + h.alpha + ')';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          // Head dot
+          var headY = ch * 0.15;
+          var headX = startX + Math.sin(t * h.speed + h.phase + 0.85 * 6) * cw * h.amp * 0.85;
+          ctx.beginPath();
+          ctx.arc(headX, headY, 3, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(34,197,94,' + (h.alpha * 2) + ')';
           ctx.fill();
-        }
-
+        });
         requestAnimationFrame(draw);
       })(0);
     }
@@ -1746,7 +1784,7 @@ document.getElementById('menuToggle').addEventListener('click', function() {
   observer.observe(grid);
 
   function animateStats() {
-    // Count up "3"
+    // Count up "4"
     var countEl = grid.querySelector('[data-count="3"]');
     if (countEl) {
       var start = 0;
@@ -1755,7 +1793,7 @@ document.getElementById('menuToggle').addEventListener('click', function() {
       function step(ts) {
         if (!startTime) startTime = ts;
         var prog = Math.min((ts - startTime) / dur, 1);
-        var val = Math.round(prog * 3);
+        var val = Math.round(prog * 4);
         countEl.textContent = val;
         if (prog < 1) requestAnimationFrame(step);
       }
@@ -1968,7 +2006,7 @@ document.addEventListener('click', function(e) {
     { name: 'Toggle Declassified Mode', action: function() { var b = document.getElementById('declassifiedToggle'); if (b) b.click(); } },
     { name: 'Visit AETHER', action: function() { portalNavigate('https://emperorbadussy.github.io/aether/'); } },
     { name: 'Visit CHARON', action: function() { portalNavigate('https://emperorbadussy.github.io/charon/'); } },
-    { name: 'Visit FACELESS', action: function() { portalNavigate('https://emperorbadussy.github.io/faceless/'); } },
+    { name: 'Visit HYDRA', action: function() { portalNavigate('https://emperorbadussy.github.io/hydra/'); } },
     { name: 'GitHub', action: function() { window.open('https://github.com/EmperorBadussy', '_blank'); } }
   ];
 
@@ -2048,7 +2086,7 @@ function portalNavigate(url) {
   setTimeout(function() { window.location.href = url; }, 600);
 }
 (function() {
-  var suiteHosts = ['emperorbadussy.github.io/aether', 'emperorbadussy.github.io/charon', 'emperorbadussy.github.io/faceless'];
+  var suiteHosts = ['emperorbadussy.github.io/aether', 'emperorbadussy.github.io/charon', 'emperorbadussy.github.io/hydra'];
   document.addEventListener('click', function(e) {
     var link = e.target.closest('a[href]');
     if (!link) return;
