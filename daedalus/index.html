@@ -3,846 +3,1790 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DAEDALUS — Payload Builder & Exploit Workbench</title>
+  <title>DAEDALUS — Dynamic Attack Engineering, Development & Analysis Lab for Unified Security</title>
+  <meta name="description" content="The master craftsman of the digital age. Build payloads, test exploits, encode data, and master offensive security through hands-on learning." />
+  <meta property="og:title" content="DAEDALUS — Payload Builder & Exploit Workbench" />
+  <meta property="og:description" content="Five specialist modules. Fourteen real encoders. Gamified academy. The ultimate offensive security learning platform." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#B026FF" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='15' width='100' height='100' fill='%23120020'/><text x='50' y='72' font-size='60' text-anchor='middle' fill='%23B026FF' font-family='sans-serif' font-weight='bold'>D</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:      #060408;
-      --bg2:     #0b060f;
-      --bg3:     #100812;
-      --purple:  #b44fff;
-      --purple2: #8b2fc9;
-      --purple3: #d4a0ff;
-      --violet:  #7c3aed;
-      --white:   #e8dff5;
-      --dim:     #5a4a70;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--white);
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 16px;
-      line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Noise */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
-      background-size: 200px 200px;
-      pointer-events: none;
-      z-index: 9998;
-      opacity: 0.45;
-    }
-
-    /* Scanlines */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.07) 2px,
-        rgba(0,0,0,0.07) 4px
-      );
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* ── Nav ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-      height: 60px;
-      background: rgba(6,4,8,0.88);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(180,79,255,0.12);
-    }
-
-    .nav-back {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: var(--dim);
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
-
-    .nav-back:hover { color: var(--purple); }
-    .nav-back::before { content: '← '; }
-
-    .nav-logo {
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 900;
-      font-size: 1rem;
-      letter-spacing: 0.3em;
-      color: var(--purple);
-      text-shadow: 0 0 20px rgba(180,79,255,0.5);
-    }
-
-    .nav-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      color: var(--dim);
-    }
-
-    /* ── Hero ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 7rem 2rem 5rem;
-      position: relative;
-    }
-
-    .hero-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -55%);
-      width: 700px;
-      height: 450px;
-      background: radial-gradient(ellipse, rgba(180,79,255,0.1) 0%, rgba(124,58,237,0.05) 40%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .myth-quote {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.25em;
-      color: var(--dim);
-      max-width: 580px;
-      line-height: 1.8;
-      margin-bottom: 2rem;
-      font-style: italic;
-    }
-
-    .myth-quote::before { content: '" '; color: var(--purple); }
-    .myth-quote::after  { content: ' "'; color: var(--purple); }
-
-    .hero-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.35em;
-      color: var(--dim);
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-
-    .hero-title {
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 900;
-      font-size: clamp(3rem, 9vw, 7.5rem);
-      letter-spacing: 0.2em;
-      color: var(--purple);
-      text-shadow: 0 0 40px rgba(180,79,255,0.5), 0 0 80px rgba(180,79,255,0.2);
-      line-height: 1;
-      margin-bottom: 1.25rem;
-    }
-
-    .hero-tagline {
-      font-family: 'Rajdhani', sans-serif;
-      font-weight: 600;
-      font-size: clamp(1rem, 2.5vw, 1.35rem);
-      color: var(--purple3);
-      letter-spacing: 0.1em;
-      margin-bottom: 1rem;
-    }
-
-    .hero-sub {
-      font-size: 1rem;
-      color: var(--dim);
-      max-width: 520px;
-      margin-bottom: 3rem;
-      line-height: 1.8;
-    }
-
-    .hero-stats {
-      display: flex;
-      gap: 3rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .stat { text-align: center; }
-
-    .stat-num {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: var(--purple);
-      text-shadow: 0 0 20px rgba(180,79,255,0.4);
-      display: block;
-    }
-
-    .stat-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      color: var(--dim);
-      text-transform: uppercase;
-    }
-
-    /* ── Common section ── */
-    .section {
-      padding: 6rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .s-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.4em;
-      color: var(--purple);
-      text-transform: uppercase;
-      margin-bottom: 0.6rem;
-    }
-
-    .s-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      margin-bottom: 1rem;
-    }
-
-    .s-desc {
-      color: var(--dim);
-      font-size: 1.05rem;
-      max-width: 600px;
-      margin-bottom: 3rem;
-    }
-
-    hr.div {
-      border: none;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(180,79,255,0.15), transparent);
-      margin: 0 2rem;
-    }
-
-    /* ── Module cards ── */
-    .module-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .module-card {
-      padding: 2rem;
-      background: rgba(180,79,255,0.03);
-      border: 1px solid rgba(180,79,255,0.1);
-      border-radius: 8px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
-    }
-
-    .module-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--purple), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .module-card:hover {
-      border-color: rgba(180,79,255,0.3);
-      background: rgba(180,79,255,0.06);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 50px -10px rgba(180,79,255,0.15);
-    }
-
-    .module-card:hover::before { opacity: 1; }
-
-    .module-glyph {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .module-name {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      color: var(--purple3);
-      margin-bottom: 0.35rem;
-    }
-
-    .module-role {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      color: var(--dim);
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-    }
-
-    .module-desc {
-      font-size: 0.92rem;
-      color: #8070a0;
-      line-height: 1.65;
-    }
-
-    .module-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 1rem;
-    }
-
-    .mtag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.58rem;
-      padding: 0.2rem 0.6rem;
-      background: rgba(180,79,255,0.08);
-      border: 1px solid rgba(180,79,255,0.2);
-      border-radius: 3px;
-      color: var(--purple3);
-      letter-spacing: 0.1em;
-    }
-
-    /* ── Academy ── */
-    .academy-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: center;
-    }
-
-    .academy-visual {
-      background: rgba(180,79,255,0.03);
-      border: 1px solid rgba(180,79,255,0.1);
-      border-radius: 8px;
-      padding: 2rem;
-    }
-
-    .xp-bar-wrap {
-      margin-bottom: 1.5rem;
-    }
-
-    .xp-bar-label {
-      display: flex;
-      justify-content: space-between;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--dim);
-      margin-bottom: 0.4rem;
-      letter-spacing: 0.1em;
-    }
-
-    .xp-bar {
-      height: 4px;
-      background: rgba(180,79,255,0.12);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .xp-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--purple2), var(--purple));
-      border-radius: 2px;
-      box-shadow: 0 0 8px rgba(180,79,255,0.5);
-    }
-
-    .achievement-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    .achievement {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      padding: 0.6rem 0.75rem;
-      background: rgba(180,79,255,0.05);
-      border: 1px solid rgba(180,79,255,0.12);
-      border-radius: 4px;
-      color: var(--purple3);
-    }
-
-    .achievement.locked {
-      opacity: 0.35;
-      filter: grayscale(1);
-    }
-
-    /* ── Features grid ── */
-    .feat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1rem;
-    }
-
-    .feat-card {
-      padding: 1.5rem;
-      background: rgba(180,79,255,0.02);
-      border: 1px solid rgba(180,79,255,0.08);
-      border-radius: 8px;
-      transition: border-color 0.3s, background 0.3s, transform 0.3s;
-    }
-
-    .feat-card:hover {
-      border-color: rgba(180,79,255,0.25);
-      background: rgba(180,79,255,0.05);
-      transform: translateY(-2px);
-    }
-
-    .feat-icon { font-size: 1.4rem; margin-bottom: 0.75rem; }
-
-    .feat-name {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--purple3);
-      margin-bottom: 0.4rem;
-    }
-
-    .feat-desc {
-      font-size: 0.88rem;
-      color: var(--dim);
-      line-height: 1.6;
-    }
-
-    /* ── Stack ── */
-    .stack-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    .stack-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      padding: 0.4rem 1rem;
-      border-radius: 4px;
-      letter-spacing: 0.1em;
-      background: rgba(180,79,255,0.06);
-      border: 1px solid rgba(180,79,255,0.2);
-      color: var(--purple3);
-      transition: background 0.2s, border-color 0.2s;
-    }
-
-    .stack-tag:hover {
-      background: rgba(180,79,255,0.12);
-      border-color: rgba(180,79,255,0.4);
-    }
-
-    /* ── CTA ── */
-    .cta-btn {
-      display: inline-block;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      padding: 0.9rem 2.5rem;
-      border-radius: 4px;
-      text-decoration: none;
-      background: transparent;
-      border: 2px solid var(--purple);
-      color: var(--purple);
-      transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
-    }
-
-    .cta-btn:hover {
-      background: rgba(180,79,255,0.12);
-      box-shadow: 0 0 30px rgba(180,79,255,0.35);
-      transform: translateY(-2px);
-    }
-
-    /* ── Scroll hint ── */
-    .scroll-hint {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      opacity: 0.35;
-    }
-
-    .scroll-hint span {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--purple);
-    }
-
-    .scroll-arrow {
-      width: 1px;
-      height: 36px;
-      background: linear-gradient(180deg, var(--purple), transparent);
-      animation: pulse 1.8s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%,100% { opacity:0.4; transform:scaleY(1); }
-      50%      { opacity:1;   transform:scaleY(1.15); }
-    }
-
-    /* ── Footer ── */
-    footer {
-      text-align: center;
-      padding: 3rem 2rem;
-      border-top: 1px solid rgba(180,79,255,0.06);
-    }
-
-    .footer-logo {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 900;
-      letter-spacing: 0.3em;
-      color: var(--purple);
-      text-shadow: 0 0 20px rgba(180,79,255,0.4);
-      margin-bottom: 0.5rem;
-    }
-
-    .footer-sub {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      color: var(--dim);
-      margin-bottom: 1.5rem;
-    }
-
-    .footer-back {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.15em;
-      color: var(--dim);
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
-
-    .footer-back:hover { color: var(--purple); }
-
-    @media (max-width: 768px) {
-      nav { padding: 0 1.25rem; }
-      .nav-badge { display: none; }
-      .section { padding: 4rem 1.25rem; }
-      .module-grid { grid-template-columns: 1fr; }
-      .academy-layout { grid-template-columns: 1fr; }
-      .feat-grid { grid-template-columns: 1fr; }
-    }
+/* ============================================
+   DAEDALUS — ULTRA-PREMIUM SHOWCASE
+   Payload Builder & Exploit Workbench
+   ============================================ */
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+:root {
+  --bg: #000000;
+  --bg-surface: #08000F;
+  --bg-raised: #120020;
+  --purple-dim: #2D004D;
+  --purple-muted: #5B1FA3;
+  --purple-core: #B026FF;
+  --purple-bright: #9D4EDD;
+  --purple-vivid: #B76EFF;
+  --purple-white: #F3E8FF;
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --glow-subtle: 0 0 10px rgba(176,38,255,0.15);
+  --glow-medium: 0 0 20px rgba(176,38,255,0.25), 0 0 40px rgba(176,38,255,0.15);
+  --glow-intense: 0 0 20px rgba(176,38,255,0.4), 0 0 60px rgba(176,38,255,0.25), 0 0 100px rgba(176,38,255,0.1);
+  --glow-neon: 0 0 4px #B76EFF, 0 0 12px rgba(183,110,255,0.5), 0 0 30px rgba(176,38,255,0.3), 0 0 60px rgba(176,38,255,0.15);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+::selection { background: rgba(176,38,255,0.4); color: var(--purple-white); }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--purple-muted); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--purple-bright); box-shadow: 0 0 8px rgba(176,38,255,0.5); }
+
+html {
+  scroll-behavior: smooth;
+  background: var(--bg);
+  color: var(--purple-white);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ============ SCROLL PROGRESS BAR ============ */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--purple-core), var(--purple-vivid));
+  box-shadow: 0 0 10px rgba(176,38,255,0.6), 0 0 20px rgba(176,38,255,0.3);
+  z-index: 10001;
+  transition: none;
+}
+
+/* ============ NOISE GRAIN OVERLAY ============ */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ============ SCANLINE OVERLAY ============ */
+.scanline-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.06) 2px,
+    rgba(0,0,0,0.06) 4px
+  );
+}
+
+/* ============ CURSOR GLOW ============ */
+.cursor-glow {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(circle, rgba(176,38,255,0.08) 0%, rgba(157,78,221,0.04) 30%, transparent 70%);
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.cursor-glow.active { opacity: 1; }
+
+/* ============ AMBIENT DRIFT ORB ============ */
+.ambient-orb {
+  position: fixed;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle, rgba(176,38,255,0.06) 0%, rgba(91,31,163,0.03) 40%, transparent 70%);
+  animation: ambientDrift 30s ease-in-out infinite;
+}
+
+@keyframes ambientDrift {
+  0%   { transform: translate(-30%, -20%); }
+  25%  { transform: translate(20%, -40%); }
+  50%  { transform: translate(10%, 20%); }
+  75%  { transform: translate(-40%, 10%); }
+  100% { transform: translate(-30%, -20%); }
+}
+
+/* ============ HERO CANVAS ============ */
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ============ NAVIGATION ============ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  border-bottom: 1px solid rgba(176,38,255,0.1);
+  transition: background 0.3s;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-back {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: rgba(183,110,255,0.5);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.nav-back:hover { color: var(--purple-core); }
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.9rem;
+  letter-spacing: 0.35em;
+  color: var(--purple-core);
+  text-shadow: 0 0 20px rgba(176,38,255,0.5);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(183,110,255,0.5);
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.3s;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0%;
+  height: 1px;
+  background: var(--purple-core);
+  box-shadow: 0 0 8px rgba(176,38,255,0.5);
+  transform: translateX(-50%);
+  transition: width 0.3s var(--ease-smooth);
+}
+
+.nav-links a:hover {
+  color: var(--purple-vivid);
+}
+
+.nav-links a:hover::after {
+  width: 60%;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 24px;
+  height: 18px;
+  position: relative;
+  z-index: 10001;
+}
+
+.mobile-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--purple-core);
+  border-radius: 1px;
+  position: absolute;
+  left: 0;
+  transition: all 0.3s;
+}
+
+.mobile-toggle span:nth-child(1) { top: 0; }
+.mobile-toggle span:nth-child(2) { top: 8px; }
+.mobile-toggle span:nth-child(3) { top: 16px; }
+
+.mobile-toggle.active span:nth-child(1) { top: 8px; transform: rotate(45deg); }
+.mobile-toggle.active span:nth-child(2) { opacity: 0; }
+.mobile-toggle.active span:nth-child(3) { top: 8px; transform: rotate(-45deg); }
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.95);
+  backdrop-filter: blur(30px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.mobile-menu.active {
+  display: flex;
+}
+
+.mobile-menu a {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  letter-spacing: 0.2em;
+  color: var(--purple-vivid);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.mobile-menu a:hover { color: var(--purple-core); }
+
+/* ============ HERO SECTION ============ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8rem 2rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--purple-vivid);
+  padding: 0.5rem 1.2rem;
+  border: 1px solid rgba(176,38,255,0.2);
+  border-radius: 100px;
+  background: rgba(176,38,255,0.05);
+  backdrop-filter: blur(10px);
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  animation: fadeInUp 0.8s 0.3s forwards;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--purple-core);
+  box-shadow: 0 0 8px var(--purple-core);
+  position: relative;
+}
+
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid var(--purple-core);
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(2); opacity: 0; }
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3.5rem, 10vw, 8rem);
+  letter-spacing: 0.2em;
+  line-height: 1;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-title .char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(40px) rotateX(40deg);
+  filter: blur(8px);
+  animation: charReveal 0.6s forwards;
+  background: linear-gradient(135deg, var(--purple-core), var(--purple-vivid));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+}
+
+@keyframes charReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+    filter: blur(0);
+  }
+}
+
+.hero-title-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(ellipse at center, rgba(176,38,255,0.2) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hero-subtitle {
+  font-family: var(--font-mono);
+  font-size: clamp(0.55rem, 1.2vw, 0.72rem);
+  letter-spacing: 0.12em;
+  color: rgba(183,110,255,0.6);
+  text-transform: uppercase;
+  max-width: 700px;
+  line-height: 2;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  animation: fadeInUp 0.8s 0.8s forwards;
+}
+
+/* Glitch effect on subtitle */
+.glitch-text {
+  position: relative;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.glitch-text::before {
+  color: var(--purple-vivid);
+  animation: glitch1 8s linear infinite;
+}
+
+.glitch-text::after {
+  color: var(--purple-muted);
+  animation: glitch2 8s linear infinite;
+}
+
+@keyframes glitch1 {
+  0%, 92%, 100% { opacity: 0; clip-path: inset(0); }
+  93% { opacity: 1; clip-path: inset(20% 0 60% 0); transform: translateX(-3px); }
+  94% { opacity: 1; clip-path: inset(50% 0 20% 0); transform: translateX(3px); }
+  95% { opacity: 0; clip-path: inset(0); transform: translateX(0); }
+}
+
+@keyframes glitch2 {
+  0%, 94%, 100% { opacity: 0; clip-path: inset(0); }
+  95% { opacity: 1; clip-path: inset(40% 0 30% 0); transform: translateX(4px); }
+  96% { opacity: 1; clip-path: inset(10% 0 70% 0); transform: translateX(-4px); }
+  97% { opacity: 0; clip-path: inset(0); transform: translateX(0); }
+}
+
+.hero-desc {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: rgba(243,232,255,0.5);
+  max-width: 560px;
+  margin-bottom: 3.5rem;
+  line-height: 1.9;
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  animation: fadeInUp 0.8s 1s forwards;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 3.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 3rem;
+}
+
+.stat {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: bounceIn 0.6s var(--ease-bounce) forwards;
+}
+
+.stat:nth-child(1) { animation-delay: 1.2s; }
+.stat:nth-child(2) { animation-delay: 1.35s; }
+.stat:nth-child(3) { animation-delay: 1.5s; }
+.stat:nth-child(4) { animation-delay: 1.65s; }
+
+@keyframes bounceIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  display: block;
+  background: linear-gradient(135deg, var(--purple-core), var(--purple-vivid));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 15px rgba(176,38,255,0.4));
+}
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: rgba(183,110,255,0.45);
+  text-transform: uppercase;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  animation: fadeInUp 0.8s 1.8s forwards;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 2;
+  opacity: 0;
+  animation: fadeInUp 0.8s 2s forwards;
+}
+
+.scroll-hint span {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(176,38,255,0.35);
+}
+
+.scroll-arrow {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(180deg, var(--purple-core), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.2); }
+}
+
+/* ============ COMMON ANIMATIONS ============ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ REVEAL ON SCROLL ============ */
+.reveal {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.7s var(--ease-smooth), transform 0.7s var(--ease-smooth);
+}
+
+.reveal.from-left {
+  transform: translateX(-60px);
+}
+
+.reveal.from-right {
+  transform: translateX(60px);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.stagger-children .reveal-child {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-bounce);
+}
+
+.stagger-children.visible .reveal-child {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============ GRADIENT DIVIDER ============ */
+.divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(176,38,255,0.2), transparent);
+  box-shadow: 0 0 15px rgba(176,38,255,0.1);
+  margin: 0 2rem;
+}
+
+/* ============ SHIMMER LINE ============ */
+.shimmer-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(176,38,255,0.15), transparent);
+  position: relative;
+  overflow: hidden;
+  margin: 3rem auto;
+  max-width: 300px;
+}
+
+.shimmer-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(176,38,255,0.6), transparent);
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -60%; }
+  100% { left: 160%; }
+}
+
+/* ============ SECTION STYLES ============ */
+.section {
+  padding: 7rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.section-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(176,38,255,0.5);
+  margin-bottom: 0.8rem;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.6rem;
+  background: linear-gradient(135deg, var(--purple-core), var(--purple-vivid));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-subtitle {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: rgba(243,232,255,0.4);
+  margin-bottom: 1rem;
+}
+
+.section-desc {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: rgba(243,232,255,0.35);
+  max-width: 600px;
+  line-height: 1.8;
+  margin-bottom: 3.5rem;
+}
+
+/* ============ 3D PERSPECTIVE CARDS ============ */
+.card-3d {
+  position: relative;
+  padding: 2rem;
+  background: rgba(8,0,15,0.8);
+  border: 1px solid rgba(176,38,255,0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 800px;
+  transition: transform 0.4s var(--ease-smooth), box-shadow 0.4s var(--ease-smooth), border-color 0.4s;
+}
+
+.card-3d::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 50%, rgba(176,38,255,0.08), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+.card-3d:hover {
+  border-color: rgba(176,38,255,0.3);
+  box-shadow:
+    0 0 20px rgba(176,38,255,0.15),
+    0 0 40px rgba(176,38,255,0.08),
+    0 20px 60px -15px rgba(0,0,0,0.5),
+    inset 0 0 30px rgba(176,38,255,0.03);
+}
+
+.card-3d:hover::after {
+  opacity: 1;
+}
+
+.card-3d::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--purple-core), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card-3d:hover::before {
+  opacity: 1;
+}
+
+/* ============ MODULE GRID ============ */
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.module-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(176,38,255,0.15), rgba(91,31,163,0.1));
+  border: 1px solid rgba(176,38,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.card-3d:hover .module-icon {
+  border-color: rgba(176,38,255,0.4);
+  box-shadow: 0 0 15px rgba(176,38,255,0.2);
+}
+
+.module-name {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--purple-vivid);
+  margin-bottom: 0.3rem;
+}
+
+.module-role {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: rgba(183,110,255,0.4);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.module-desc {
+  font-size: 0.92rem;
+  color: rgba(243,232,255,0.4);
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+
+.module-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.mtag {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  padding: 0.2rem 0.6rem;
+  background: rgba(176,38,255,0.06);
+  border: 1px solid rgba(176,38,255,0.15);
+  border-radius: 3px;
+  color: rgba(183,110,255,0.6);
+  letter-spacing: 0.1em;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.card-3d:hover .mtag {
+  background: rgba(176,38,255,0.1);
+  border-color: rgba(176,38,255,0.25);
+}
+
+/* ============ ACADEMY SECTION ============ */
+.academy-desc {
+  font-size: 1rem;
+  color: rgba(243,232,255,0.35);
+  max-width: 600px;
+  line-height: 1.8;
+  margin-bottom: 3rem;
+}
+
+.academy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 3rem;
+}
+
+.academy-card {
+  padding: 1.5rem;
+  background: rgba(8,0,15,0.6);
+  border: 1px solid rgba(176,38,255,0.08);
+  border-radius: 10px;
+  transition: border-color 0.3s, background 0.3s, transform 0.3s;
+}
+
+.academy-card:hover {
+  border-color: rgba(176,38,255,0.25);
+  background: rgba(18,0,32,0.8);
+  transform: translateY(-4px);
+}
+
+.academy-num {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(176,38,255,0.35);
+  margin-bottom: 0.75rem;
+}
+
+.academy-name {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--purple-vivid);
+  margin-bottom: 0.5rem;
+}
+
+.academy-info {
+  font-size: 0.85rem;
+  color: rgba(243,232,255,0.35);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.academy-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.academy-meta span {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  color: rgba(183,110,255,0.45);
+}
+
+.academy-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.academy-feat {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(176,38,255,0.03);
+  border: 1px solid rgba(176,38,255,0.08);
+  border-radius: 8px;
+  transition: border-color 0.3s;
+}
+
+.academy-feat:hover {
+  border-color: rgba(176,38,255,0.2);
+}
+
+.academy-feat-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.academy-feat-text {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: rgba(183,110,255,0.6);
+}
+
+/* ============ FEATURES GRID ============ */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.feat-card {
+  padding: 1.75rem;
+  background: rgba(8,0,15,0.5);
+  border: 1px solid rgba(176,38,255,0.08);
+  border-radius: 10px;
+  transition: border-color 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.feat-card:hover {
+  border-color: rgba(176,38,255,0.25);
+  background: rgba(18,0,32,0.6);
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px -10px rgba(176,38,255,0.1);
+}
+
+.feat-icon {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.feat-name {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--purple-vivid);
+  margin-bottom: 0.5rem;
+}
+
+.feat-desc {
+  font-size: 0.88rem;
+  color: rgba(243,232,255,0.35);
+  line-height: 1.7;
+}
+
+/* ============ TECH STACK ============ */
+.stack-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.stack-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  letter-spacing: 0.1em;
+  background: rgba(176,38,255,0.05);
+  border: 1px solid rgba(176,38,255,0.15);
+  color: rgba(183,110,255,0.6);
+  transition: all 0.3s;
+}
+
+.stack-tag:hover {
+  background: rgba(176,38,255,0.12);
+  border-color: rgba(176,38,255,0.35);
+  color: var(--purple-vivid);
+  box-shadow: 0 0 15px rgba(176,38,255,0.1);
+}
+
+/* ============ CTA BUTTON — MAGNETIC ============ */
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 1rem 2.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.3s, background 0.3s, border-color 0.3s;
+}
+
+.cta-primary {
+  background: linear-gradient(135deg, var(--purple-core), var(--purple-muted));
+  border: 1px solid rgba(176,38,255,0.4);
+  color: var(--purple-white);
+}
+
+.cta-primary:hover {
+  box-shadow: var(--glow-intense);
+  border-color: var(--purple-core);
+}
+
+.cta-secondary {
+  background: transparent;
+  border: 1px solid rgba(176,38,255,0.25);
+  color: var(--purple-vivid);
+}
+
+.cta-secondary:hover {
+  background: rgba(176,38,255,0.08);
+  border-color: rgba(176,38,255,0.4);
+  box-shadow: var(--glow-medium);
+}
+
+/* ============ FOOTER ============ */
+footer {
+  text-align: center;
+  padding: 4rem 2rem;
+  border-top: 1px solid rgba(176,38,255,0.06);
+  position: relative;
+}
+
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: 0.35em;
+  background: linear-gradient(135deg, var(--purple-core), var(--purple-vivid));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.75rem;
+}
+
+.footer-sub {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: rgba(183,110,255,0.3);
+  margin-bottom: 1.75rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: rgba(183,110,255,0.4);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.footer-links a:hover {
+  color: var(--purple-core);
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links { display: none; }
+  .mobile-toggle { display: block; }
+  .section { padding: 5rem 1.25rem; }
+  .module-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .academy-grid { grid-template-columns: 1fr; }
+  .academy-features { grid-template-columns: 1fr; }
+  .hero-stats { gap: 2rem; }
+  .hero { padding: 7rem 1.25rem 5rem; }
+  .hero-cta { flex-direction: column; align-items: center; }
+}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .hero-title .char {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .stat {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-badge,
+  .hero-subtitle,
+  .hero-desc,
+  .hero-cta,
+  .scroll-hint {
+    opacity: 1;
+    transform: none;
+  }
+
+  .cursor-glow,
+  .ambient-orb {
+    display: none;
+  }
+}
   </style>
 </head>
 <body>
 
-  <nav>
+<!-- Scroll Progress Bar -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Noise & Scanline Overlays -->
+<div class="noise-overlay"></div>
+<div class="scanline-overlay"></div>
+
+<!-- Cursor Glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- Ambient Drift Orb -->
+<div class="ambient-orb"></div>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-left">
     <a class="nav-back" href="/suite/">PHANTOM Suite</a>
-    <div class="nav-logo">DAEDALUS</div>
-    <span class="nav-badge">v2.0 // Payload Builder</span>
-  </nav>
+    <span class="nav-logo">DAEDALUS</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#academy">Academy</a></li>
+    <li><a href="#stack">Stack</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
 
-  <!-- Hero -->
-  <div class="hero">
-    <div class="hero-glow"></div>
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#overview" class="mobile-link">Overview</a>
+  <a href="#modules" class="mobile-link">Modules</a>
+  <a href="#academy" class="mobile-link">Academy</a>
+  <a href="#stack" class="mobile-link">Stack</a>
+  <a href="/suite/" class="mobile-link">PHANTOM Suite</a>
+</div>
 
-    <p class="myth-quote">In Greek mythology, Daedalus was the master craftsman who built the Labyrinth — his genius unmatched, his creations inescapable.</p>
+<!-- ============ HERO SECTION ============ -->
+<section class="hero" id="overview">
+  <canvas class="hero-canvas" id="heroCanvas"></canvas>
 
-    <p class="hero-tag">// The Master Craftsman</p>
-    <h1 class="hero-title">DAEDALUS</h1>
-    <p class="hero-tagline">Payload Builder &amp; Exploit Workbench</p>
-    <p class="hero-sub">
-      Craft, encode, and deploy payloads with surgical precision. Five specialist modules. Unlimited attack surface.
+  <div class="hero-badge">
+    <span class="pulse-dot"></span>
+    ACTIVE &mdash; EXPLOIT DEVELOPMENT PLATFORM
+  </div>
+
+  <h1 class="hero-title" id="heroTitle">DAEDALUS</h1>
+
+  <p class="hero-subtitle glitch-text" data-text="Dynamic Attack Engineering, Development & Analysis Lab for Unified Security">
+    Dynamic Attack Engineering, Development &amp; Analysis Lab for Unified Security
+  </p>
+
+  <p class="hero-desc">
+    The master craftsman of the digital age. Build payloads, test exploits, encode data, and master offensive security through hands-on learning.
+  </p>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num">3</span>
+      <span class="stat-label">Forges</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">14</span>
+      <span class="stat-label">Encoders</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">5</span>
+      <span class="stat-label">Modules</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">15</span>
+      <span class="stat-label">Lessons</span>
+    </div>
+  </div>
+
+  <div class="hero-cta">
+    <a class="cta-btn cta-primary magnetic-btn" href="https://github.com/EmperorBadussy/DAEDALUS">
+      View on GitHub
+    </a>
+    <a class="cta-btn cta-secondary magnetic-btn" href="#modules">
+      Explore Modules
+    </a>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ============ MODULES SECTION ============ -->
+<section class="section" id="modules">
+  <div class="reveal">
+    <p class="section-tag">// Architecture</p>
+    <h2 class="section-title">THE LABYRINTH</h2>
+    <p class="section-subtitle">Five chambers. Infinite possibilities.</p>
+    <div class="shimmer-line"></div>
+  </div>
+
+  <div class="module-grid stagger-children" id="moduleGrid">
+
+    <div class="card-3d reveal-child">
+      <div class="module-icon">&#x1F525;</div>
+      <div class="module-name">FORGE</div>
+      <div class="module-role">Payload Template Builder</div>
+      <p class="module-desc">XSS, SQLi, and command injection templates with variable substitution. Build, customize, and export ready-to-use payloads.</p>
+      <div class="module-tags">
+        <span class="mtag">XSS</span>
+        <span class="mtag">SQLi</span>
+        <span class="mtag">CMDi</span>
+        <span class="mtag">Variables</span>
+        <span class="mtag">Export</span>
+      </div>
+    </div>
+
+    <div class="card-3d reveal-child">
+      <div class="module-icon">&#x2699;&#xFE0F;</div>
+      <div class="module-name">WORKSHOP</div>
+      <div class="module-role">Vulnerability Research Workspace</div>
+      <p class="module-desc">Categorized exploit database browser with severity filters and technique tags. Research and catalog vulnerabilities.</p>
+      <div class="module-tags">
+        <span class="mtag">Database</span>
+        <span class="mtag">Severity</span>
+        <span class="mtag">Filters</span>
+        <span class="mtag">Research</span>
+      </div>
+    </div>
+
+    <div class="card-3d reveal-child">
+      <div class="module-icon">&#x1F5C4;&#xFE0F;</div>
+      <div class="module-name">ARMORY</div>
+      <div class="module-role">Searchable Technique Library</div>
+      <p class="module-desc">100+ attack patterns organized by category &mdash; injection, auth bypass, SSRF, deserialization, and more.</p>
+      <div class="module-tags">
+        <span class="mtag">100+ Patterns</span>
+        <span class="mtag">Injection</span>
+        <span class="mtag">Auth Bypass</span>
+        <span class="mtag">SSRF</span>
+        <span class="mtag">Deser</span>
+      </div>
+    </div>
+
+    <div class="card-3d reveal-child">
+      <div class="module-icon">&#x1F9EA;</div>
+      <div class="module-name">CRUCIBLE</div>
+      <div class="module-role">Live HTTP Request Tester</div>
+      <p class="module-desc">Send custom requests, inspect responses, test endpoints. Like a hacker's Postman &mdash; full control over headers, body, and method.</p>
+      <div class="module-tags">
+        <span class="mtag">HTTP</span>
+        <span class="mtag">Headers</span>
+        <span class="mtag">Inspect</span>
+        <span class="mtag">Replay</span>
+      </div>
+    </div>
+
+    <div class="card-3d reveal-child">
+      <div class="module-icon">&#x1F300;</div>
+      <div class="module-name">LABYRINTH</div>
+      <div class="module-role">Encoding / Decoding Chain Engine</div>
+      <p class="module-desc">14 real encoders &mdash; Base64, URL, HTML, Hex, ROT13, Binary, MD5, SHA256, JWT decode, Unicode, Punycode, Morse, Reverse, Double URL. Chain them together.</p>
+      <div class="module-tags">
+        <span class="mtag">14 Encoders</span>
+        <span class="mtag">Chains</span>
+        <span class="mtag">Base64</span>
+        <span class="mtag">SHA256</span>
+        <span class="mtag">JWT</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ============ ACADEMY SECTION ============ -->
+<section class="section" id="academy">
+  <div class="reveal">
+    <p class="section-tag">// Gamified Learning</p>
+    <h2 class="section-title">THE ACADEMY</h2>
+    <p class="section-subtitle">Master the craft. Level up.</p>
+    <p class="academy-desc">
+      A full gamified learning system with XP progression, skill trees, achievements, and challenges. Every lesson teaches real offensive techniques. Every challenge tests your skills.
     </p>
-
-    <div class="hero-stats">
-      <div class="stat">
-        <span class="stat-num">5</span>
-        <span class="stat-label">Modules</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">14</span>
-        <span class="stat-label">Encoders</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">WAF</span>
-        <span class="stat-label">Bypass Sim</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">XP</span>
-        <span class="stat-label">Academy</span>
-      </div>
-    </div>
-
-    <div class="scroll-hint">
-      <span>Scroll</span>
-      <div class="scroll-arrow"></div>
-    </div>
   </div>
 
-  <hr class="div" />
+  <div class="academy-grid stagger-children" id="academyGrid">
 
-  <!-- Modules -->
-  <div class="section" id="modules">
-    <p class="s-tag">// Architecture</p>
-    <h2 class="s-title">The Modules</h2>
-    <p class="s-desc">Five specialist workspaces, each mastering a domain of payload craft.</p>
-
-    <div class="module-grid">
-
-      <div class="module-card">
-        <div class="module-glyph">🔥</div>
-        <div class="module-name">FORGE</div>
-        <div class="module-role">Template Engine</div>
-        <p class="module-desc">Dynamic payload construction from a living template library. Context-aware generation for XSS, SQLi, SSRF, and more.</p>
-        <div class="module-tags">
-          <span class="mtag">XSS</span>
-          <span class="mtag">SQLi</span>
-          <span class="mtag">SSRF</span>
-          <span class="mtag">SSTI</span>
-          <span class="mtag">Templates</span>
-        </div>
+    <div class="academy-card reveal-child">
+      <div class="academy-num">TRACK 01</div>
+      <div class="academy-name">Injection Fundamentals</div>
+      <p class="academy-info">SQLi, XSS, command injection. The foundation of offensive security.</p>
+      <div class="academy-meta">
+        <span>4 Lessons</span>
+        <span>6 Challenges</span>
+        <span>500 XP</span>
       </div>
-
-      <div class="module-card">
-        <div class="module-glyph">⚙️</div>
-        <div class="module-name">WORKSHOP</div>
-        <div class="module-role">Code Editor</div>
-        <p class="module-desc">Monaco-powered exploit editor with syntax highlighting, IntelliSense, and live execution sandbox. Your payload IDE.</p>
-        <div class="module-tags">
-          <span class="mtag">Monaco</span>
-          <span class="mtag">Sandbox</span>
-          <span class="mtag">IntelliSense</span>
-          <span class="mtag">Live Run</span>
-        </div>
-      </div>
-
-      <div class="module-card">
-        <div class="module-glyph">🗄️</div>
-        <div class="module-name">ARMORY</div>
-        <div class="module-role">Payload Database</div>
-        <p class="module-desc">Curated payload library organized by vulnerability class, bypass technique, and context. Searchable and filterable.</p>
-        <div class="module-tags">
-          <span class="mtag">Database</span>
-          <span class="mtag">Search</span>
-          <span class="mtag">Categories</span>
-          <span class="mtag">Export</span>
-        </div>
-      </div>
-
-      <div class="module-card">
-        <div class="module-glyph">🧪</div>
-        <div class="module-name">CRUCIBLE</div>
-        <div class="module-role">HTTP Testing</div>
-        <p class="module-desc">Burp Suite-style HTTP request builder. Intercept, replay, and fuzz requests with full control over headers and body.</p>
-        <div class="module-tags">
-          <span class="mtag">HTTP</span>
-          <span class="mtag">Replay</span>
-          <span class="mtag">Fuzzer</span>
-          <span class="mtag">Intercept</span>
-        </div>
-      </div>
-
-      <div class="module-card">
-        <div class="module-glyph">🌀</div>
-        <div class="module-name">LABYRINTH</div>
-        <div class="module-role">Encoding Chains</div>
-        <p class="module-desc">Chain 14 real encoders in sequence. Build multi-layer obfuscation to bypass filters, WAFs, and detection engines.</p>
-        <div class="module-tags">
-          <span class="mtag">Base64</span>
-          <span class="mtag">URL Encode</span>
-          <span class="mtag">HTML Entities</span>
-          <span class="mtag">Unicode</span>
-          <span class="mtag">Chains</span>
-        </div>
-      </div>
-
     </div>
+
+    <div class="academy-card reveal-child">
+      <div class="academy-num">TRACK 02</div>
+      <div class="academy-name">Authentication Attacks</div>
+      <p class="academy-info">Brute force, session hijacking, JWT attacks. Break the gatekeepers.</p>
+      <div class="academy-meta">
+        <span>3 Lessons</span>
+        <span>5 Challenges</span>
+        <span>450 XP</span>
+      </div>
+    </div>
+
+    <div class="academy-card reveal-child">
+      <div class="academy-num">TRACK 03</div>
+      <div class="academy-name">Server-Side Exploits</div>
+      <p class="academy-info">SSRF, XXE, deserialization. Exploit the backend.</p>
+      <div class="academy-meta">
+        <span>3 Lessons</span>
+        <span>4 Challenges</span>
+        <span>400 XP</span>
+      </div>
+    </div>
+
+    <div class="academy-card reveal-child">
+      <div class="academy-num">TRACK 04</div>
+      <div class="academy-name">Encoding & Evasion</div>
+      <p class="academy-info">WAF bypass, encoding chains, obfuscation. Evade detection.</p>
+      <div class="academy-meta">
+        <span>3 Lessons</span>
+        <span>5 Challenges</span>
+        <span>450 XP</span>
+      </div>
+    </div>
+
+    <div class="academy-card reveal-child">
+      <div class="academy-num">TRACK 05</div>
+      <div class="academy-name">Advanced Techniques</div>
+      <p class="academy-info">Race conditions, prototype pollution, template injection. The deep end.</p>
+      <div class="academy-meta">
+        <span>2 Lessons</span>
+        <span>4 Challenges</span>
+        <span>600 XP</span>
+      </div>
+    </div>
+
   </div>
 
-  <hr class="div" />
+  <div class="shimmer-line"></div>
 
-  <!-- Academy -->
-  <div class="section" id="academy">
-    <p class="s-tag">// Gamification</p>
-    <h2 class="s-title">The Academy</h2>
-    <p class="s-desc">Level up your skills through structured challenges and a competitive progression system.</p>
-
-    <div class="academy-layout">
-      <div class="academy-text">
-        <p style="color:#8070a0; line-height:1.8; margin-bottom:1.25rem;">
-          DAEDALUS features a built-in gamified learning system. Solve challenges, earn XP, unlock achievements, and track your progress through the ranks of payload craft mastery.
-        </p>
-        <p style="color:#8070a0; line-height:1.8; margin-bottom:1.25rem;">
-          From beginner XSS injections to advanced WAF bypass chains — every challenge is a step toward mastery. Streak bonuses reward consistency. Leaderboards track the elite.
-        </p>
-        <p style="color: var(--purple3); font-family:'JetBrains Mono',monospace; font-size:0.8rem;">
-          Every payload is a lesson. Every bypass, a breakthrough.
-        </p>
-      </div>
-
-      <div class="academy-visual">
-        <div style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--dim); letter-spacing:0.2em; margin-bottom:1.25rem; text-transform:uppercase;">Operator Profile</div>
-
-        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--purple2),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1.25rem;box-shadow:0 0 20px rgba(180,79,255,0.4);">🔧</div>
-          <div>
-            <div style="font-family:'Orbitron',sans-serif;font-size:0.85rem;font-weight:700;color:var(--purple3);letter-spacing:0.1em;">CRAFTSMAN LVL 7</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--dim);">4,280 / 5,000 XP</div>
-          </div>
-        </div>
-
-        <div class="xp-bar-wrap">
-          <div class="xp-bar-label">
-            <span>Level Progress</span>
-            <span style="color:var(--purple3);">85%</span>
-          </div>
-          <div class="xp-bar">
-            <div class="xp-fill" style="width:85%"></div>
-          </div>
-        </div>
-
-        <div class="xp-bar-wrap">
-          <div class="xp-bar-label">
-            <span>XSS Mastery</span>
-            <span style="color:var(--purple3);">92%</span>
-          </div>
-          <div class="xp-bar">
-            <div class="xp-fill" style="width:92%"></div>
-          </div>
-        </div>
-
-        <div class="xp-bar-wrap">
-          <div class="xp-bar-label">
-            <span>WAF Bypass</span>
-            <span style="color:var(--purple3);">67%</span>
-          </div>
-          <div class="xp-bar">
-            <div class="xp-fill" style="width:67%"></div>
-          </div>
-        </div>
-
-        <div style="margin-top:1.25rem;">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.6rem;">Achievements</div>
-          <div class="achievement-list">
-            <div class="achievement">🏆 &nbsp;Labyrinth Builder — Completed 50 challenges</div>
-            <div class="achievement">🔥 &nbsp;7-Day Streak — Consistency rewarded</div>
-            <div class="achievement">⚡ &nbsp;WAF Slayer — Bypassed 10 filter types</div>
-            <div class="achievement locked">🌀 &nbsp;Architect — Unlock at Level 10</div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="reveal">
+    <p class="section-tag" style="margin-top: 2rem;">// System Features</p>
   </div>
 
-  <hr class="div" />
-
-  <!-- Features -->
-  <div class="section" id="features">
-    <p class="s-tag">// Capabilities</p>
-    <h2 class="s-title">Features</h2>
-    <p class="s-desc">Every weapon a craftsman needs.</p>
-
-    <div class="feat-grid">
-      <div class="feat-card">
-        <div class="feat-icon">🛡️</div>
-        <div class="feat-name">WAF Bypass Simulator</div>
-        <p class="feat-desc">Test payloads against simulated WAF rule sets. Identify bypass vectors before live deployment.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🔗</div>
-        <div class="feat-name">14 Real Encoders</div>
-        <p class="feat-desc">Base64, URL, HTML entities, Unicode escapes, hex, octal, ROT13, and more — chainable in sequence.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🗃️</div>
-        <div class="feat-name">Interactive SQL Builder</div>
-        <p class="feat-desc">Visual query builder for constructing SQLi payloads. Supports UNION, BLIND, TIME-based, and error-based.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🔥</div>
-        <div class="feat-name">Streak System</div>
-        <p class="feat-desc">Daily challenge streaks with XP multipliers. The longer the streak, the harder the challenge, the greater the reward.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📦</div>
-        <div class="feat-name">Payload Export</div>
-        <p class="feat-desc">Export payloads as text, JSON, or directly to clipboard. One-click copy for rapid deployment.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🎯</div>
-        <div class="feat-name">Context Detection</div>
-        <p class="feat-desc">Paste HTML, JS, or SQL context — DAEDALUS suggests the optimal payload variants automatically.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📚</div>
-        <div class="feat-name">Reference Library</div>
-        <p class="feat-desc">Built-in vulnerability reference. OWASP Top 10, CVE patterns, and bypass cheatsheets at your fingertips.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🌀</div>
-        <div class="feat-name">Encoding Chains</div>
-        <p class="feat-desc">Multi-layer encoding pipelines. Stack encoders visually and watch the output transform in real time.</p>
-      </div>
+  <div class="academy-features stagger-children" id="academyFeatures">
+    <div class="academy-feat reveal-child">
+      <span class="academy-feat-icon">&#x1F3AF;</span>
+      <span class="academy-feat-text">Interactive Challenges</span>
+    </div>
+    <div class="academy-feat reveal-child">
+      <span class="academy-feat-icon">&#x1F4CA;</span>
+      <span class="academy-feat-text">Confidence Meter</span>
+    </div>
+    <div class="academy-feat reveal-child">
+      <span class="academy-feat-icon">&#x1F525;</span>
+      <span class="academy-feat-text">Streak System</span>
+    </div>
+    <div class="academy-feat reveal-child">
+      <span class="academy-feat-icon">&#x1F50A;</span>
+      <span class="academy-feat-text">Sound Effects</span>
+    </div>
+    <div class="academy-feat reveal-child">
+      <span class="academy-feat-icon">&#x1F333;</span>
+      <span class="academy-feat-text">Visual Skill Tree</span>
     </div>
   </div>
+</section>
 
-  <hr class="div" />
+<hr class="divider" />
 
-  <!-- The Stack -->
-  <div class="section" id="stack">
-    <p class="s-tag">// Technology</p>
-    <h2 class="s-title">The Stack</h2>
-    <p class="s-desc">Precision engineering beneath the surface.</p>
-
-    <div class="stack-grid">
-      <span class="stack-tag">Electron</span>
-      <span class="stack-tag">React</span>
-      <span class="stack-tag">Tailwind CSS</span>
-      <span class="stack-tag">TypeScript</span>
-      <span class="stack-tag">Monaco Editor</span>
-      <span class="stack-tag">Vite</span>
-      <span class="stack-tag">Node.js</span>
-      <span class="stack-tag">SQLite</span>
-      <span class="stack-tag">electron-vite</span>
-    </div>
-
-    <div style="margin-top:2.5rem;text-align:center;">
-      <a class="cta-btn" href="https://github.com/phantom-suite/daedalus">View on GitHub</a>
-    </div>
+<!-- ============ FEATURES SECTION ============ -->
+<section class="section" id="features">
+  <div class="reveal">
+    <p class="section-tag">// Core Engine</p>
+    <h2 class="section-title">CAPABILITIES</h2>
+    <div class="shimmer-line"></div>
   </div>
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-logo">DAEDALUS</div>
-    <div class="footer-sub">Part of the PHANTOM Suite // Payload Builder &amp; Exploit Workbench</div>
-    <a class="footer-back" href="/suite/">← Back to PHANTOM Suite</a>
-  </footer>
+  <div class="features-grid stagger-children" id="featuresGrid">
+
+    <div class="feat-card reveal-child">
+      <div class="feat-icon">&#x1F517;</div>
+      <div class="feat-name">Real Encoding Engine</div>
+      <p class="feat-desc">14 encoders that actually transform data. Base64, URL, HTML, Hex, ROT13, SHA256, and more.</p>
+    </div>
+
+    <div class="feat-card reveal-child">
+      <div class="feat-icon">&#x1F310;</div>
+      <div class="feat-name">Live HTTP Client</div>
+      <p class="feat-desc">Send real requests to test endpoints. Full control over method, headers, body, and authentication.</p>
+    </div>
+
+    <div class="feat-card reveal-child">
+      <div class="feat-icon">&#x1F3AE;</div>
+      <div class="feat-name">Gamified Learning</div>
+      <p class="feat-desc">XP progression, levels, achievements, and streaks. Learn offensive security through gameplay.</p>
+    </div>
+
+    <div class="feat-card reveal-child">
+      <div class="feat-icon">&#x1F4E6;</div>
+      <div class="feat-name">Payload Templates</div>
+      <p class="feat-desc">Production-ready exploit templates with variable substitution. Export as text, JSON, or clipboard.</p>
+    </div>
+
+    <div class="feat-card reveal-child">
+      <div class="feat-icon">&#x1F9E9;</div>
+      <div class="feat-name">Interactive Challenges</div>
+      <p class="feat-desc">Hands-on coding exercises that test real skills. Solve, submit, earn XP.</p>
+    </div>
+
+    <div class="feat-card reveal-child">
+      <div class="feat-icon">&#x1F333;</div>
+      <div class="feat-name">Visual Skill Tree</div>
+      <p class="feat-desc">Track mastery across injection, evasion, authentication, and server-side domains.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ============ TECH STACK SECTION ============ -->
+<section class="section" id="stack">
+  <div class="reveal">
+    <p class="section-tag">// Technology</p>
+    <h2 class="section-title">THE STACK</h2>
+    <p class="section-subtitle">Precision engineering beneath the surface.</p>
+    <div class="shimmer-line"></div>
+  </div>
+
+  <div class="stack-grid reveal">
+    <span class="stack-tag">Electron</span>
+    <span class="stack-tag">React 19</span>
+    <span class="stack-tag">TypeScript</span>
+    <span class="stack-tag">Tailwind CSS v4</span>
+    <span class="stack-tag">Framer Motion</span>
+    <span class="stack-tag">Zustand</span>
+    <span class="stack-tag">Web Audio API</span>
+  </div>
+
+  <div class="reveal" style="text-align: center; margin-top: 3rem;">
+    <a class="cta-btn cta-primary magnetic-btn" href="https://github.com/EmperorBadussy/DAEDALUS">
+      View on GitHub
+    </a>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-logo">DAEDALUS</div>
+  <div class="footer-sub">Part of the PHANTOM Suite &mdash; Payload Builder &amp; Exploit Workbench</div>
+  <div class="footer-links">
+    <a href="/suite/">PHANTOM Suite</a>
+    <a href="https://github.com/EmperorBadussy/DAEDALUS">GitHub</a>
+    <a href="#overview">Back to Top</a>
+  </div>
+</footer>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+(function() {
+  'use strict';
+
+  // ── Reduced motion check ──
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+  // ── 1. CANVAS CONSTELLATION ──
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let mouseX = -9999, mouseY = -9999;
+  const PARTICLE_COUNT = window.innerWidth < 768 ? 20 : 45;
+  const CONNECTION_DISTANCE = 180;
+  const MOUSE_RADIUS = 200;
+
+  function resizeCanvas() {
+    const hero = canvas.parentElement;
+    canvas.width = hero.offsetWidth;
+    canvas.height = hero.offsetHeight;
+  }
+
+  function createParticles() {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        radius: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.5 + 0.3
+      });
+    }
+  }
+
+  function drawConstellation() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECTION_DISTANCE) {
+          const alpha = (1 - dist / CONNECTION_DISTANCE) * 0.15;
+          ctx.strokeStyle = 'rgba(176, 38, 255, ' + alpha + ')';
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw particles and update
+    for (let p of particles) {
+      // Mouse interaction
+      const dmx = p.x - mouseX;
+      const dmy = p.y - mouseY;
+      const mouseDist = Math.sqrt(dmx * dmx + dmy * dmy);
+      if (mouseDist < MOUSE_RADIUS && mouseDist > 0) {
+        const force = (MOUSE_RADIUS - mouseDist) / MOUSE_RADIUS;
+        p.vx += (dmx / mouseDist) * force * 0.3;
+        p.vy += (dmy / mouseDist) * force * 0.3;
+      }
+
+      // Damping
+      p.vx *= 0.98;
+      p.vy *= 0.98;
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Wrap around
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+
+      // Draw
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(183, 110, 255, ' + p.alpha + ')';
+      ctx.fill();
+
+      // Glow
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius * 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(176, 38, 255, ' + (p.alpha * 0.1) + ')';
+      ctx.fill();
+    }
+
+    // Mouse connections
+    if (mouseX > -999) {
+      for (let p of particles) {
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MOUSE_RADIUS) {
+          const alpha = (1 - dist / MOUSE_RADIUS) * 0.25;
+          ctx.strokeStyle = 'rgba(176, 38, 255, ' + alpha + ')';
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(mouseX, mouseY);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    if (!prefersReducedMotion) {
+      requestAnimationFrame(drawConstellation);
+    }
+  }
+
+  resizeCanvas();
+  createParticles();
+  if (!prefersReducedMotion) {
+    drawConstellation();
+  }
+
+  window.addEventListener('resize', function() {
+    resizeCanvas();
+    createParticles();
+  });
+
+  canvas.parentElement.addEventListener('mousemove', function(e) {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+  });
+
+  canvas.parentElement.addEventListener('mouseleave', function() {
+    mouseX = -9999;
+    mouseY = -9999;
+  });
+
+  // ── 2. CURSOR GLOW (10% LERP) ──
+  if (!isTouchDevice && !prefersReducedMotion) {
+    const glow = document.getElementById('cursorGlow');
+    let glowX = 0, glowY = 0;
+    let targetX = 0, targetY = 0;
+    let glowActive = false;
+
+    document.addEventListener('mousemove', function(e) {
+      targetX = e.clientX;
+      targetY = e.clientY;
+      if (!glowActive) {
+        glowActive = true;
+        glow.classList.add('active');
+        glowX = targetX;
+        glowY = targetY;
+      }
+    });
+
+    document.addEventListener('mouseleave', function() {
+      glowActive = false;
+      glow.classList.remove('active');
+    });
+
+    function updateGlow() {
+      glowX += (targetX - glowX) * 0.1;
+      glowY += (targetY - glowY) * 0.1;
+      glow.style.left = glowX + 'px';
+      glow.style.top = glowY + 'px';
+      requestAnimationFrame(updateGlow);
+    }
+    updateGlow();
+  }
+
+  // ── 3. SCROLL PROGRESS BAR ──
+  const progressBar = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', function() {
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = (scrollTop / scrollHeight) * 100;
+    progressBar.style.width = progress + '%';
+  }, { passive: true });
+
+  // ── 4. CHARACTER-BY-CHARACTER TITLE REVEAL ──
+  const titleEl = document.getElementById('heroTitle');
+  const titleText = titleEl.textContent;
+  titleEl.textContent = '';
+  for (let i = 0; i < titleText.length; i++) {
+    const span = document.createElement('span');
+    span.className = 'char';
+    span.textContent = titleText[i];
+    span.style.animationDelay = (0.4 + i * 0.05) + 's';
+    titleEl.appendChild(span);
+  }
+
+  // ── 5. INTERSECTION OBSERVER — SCROLL REVEALS ──
+  const revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+
+        // Stagger children
+        if (entry.target.classList.contains('stagger-children')) {
+          const children = entry.target.querySelectorAll('.reveal-child');
+          children.forEach(function(child, idx) {
+            child.style.transitionDelay = (idx * 0.03) + 's';
+          });
+        }
+
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal, .stagger-children').forEach(function(el) {
+    revealObserver.observe(el);
+  });
+
+  // ── 6. 3D PERSPECTIVE CARD HOVER ──
+  document.querySelectorAll('.card-3d').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      if (prefersReducedMotion) return;
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = (y - centerY) / centerY * -8;
+      const rotateY = (x - centerX) / centerX * 8;
+      card.style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale(1.02)';
+
+      // Move the ::after gradient overlay
+      const percX = (x / rect.width) * 100;
+      const percY = (y / rect.height) * 100;
+      card.style.setProperty('--mouse-x', percX + '%');
+      card.style.setProperty('--mouse-y', percY + '%');
+    });
+
+    card.addEventListener('mouseleave', function() {
+      card.style.transform = '';
+    });
+  });
+
+  // ── 7. MAGNETIC BUTTON EFFECT ──
+  document.querySelectorAll('.magnetic-btn').forEach(function(btn) {
+    btn.addEventListener('mousemove', function(e) {
+      if (prefersReducedMotion) return;
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      btn.style.transform = 'translate(' + (x * 0.15) + 'px, ' + (y * 0.15) + 'px)';
+    });
+
+    btn.addEventListener('mouseleave', function() {
+      btn.style.transform = '';
+    });
+  });
+
+  // ── 8. MOBILE MENU TOGGLE ──
+  const mobileToggle = document.getElementById('mobileToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  mobileToggle.addEventListener('click', function() {
+    mobileToggle.classList.toggle('active');
+    mobileMenu.classList.toggle('active');
+    document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+  });
+
+  document.querySelectorAll('.mobile-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      mobileToggle.classList.remove('active');
+      mobileMenu.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // ── 9. SMOOTH SCROLL ──
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+})();
+</script>
 
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ECHO — Steganography & Data Concealment Suite</title>
+  <title>ECHO — Encrypted Concealment & Hidden Operations</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet" />
@@ -11,22 +11,23 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:    #08030a;
-      --bg2:   #0d040f;
-      --bg3:   #120510;
-      --pink:  #ff2d78;
-      --pink2: #c91060;
-      --pink3: #ff80ab;
-      --rose:  #ff6ec7;
-      --white: #f5e0ee;
-      --dim:   #6b3a55;
+      --bg: #000000;
+      --bg-surface: #0A0205;
+      --bg-raised: #180510;
+      --pink-dim: #3D0020;
+      --pink-muted: #8B1A5A;
+      --pink-core: #FF2E97;
+      --pink-bright: #FF5CB0;
+      --pink-vivid: #FF85C8;
+      --pink-white: #FFF0F7;
+      --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
-      color: var(--white);
+      color: var(--pink-white);
       font-family: 'Rajdhani', sans-serif;
       font-size: 16px;
       line-height: 1.6;
@@ -34,19 +35,31 @@
       overflow-x: hidden;
     }
 
-    /* Noise */
+    /* ── Scroll Progress Bar ── */
+    .scroll-progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--pink-core), var(--pink-vivid));
+      box-shadow: 0 0 12px rgba(255,46,151,0.6);
+      z-index: 10001;
+      transition: none;
+    }
+
+    /* ── Noise Overlay ── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
       background-size: 200px 200px;
       pointer-events: none;
       z-index: 9998;
-      opacity: 0.45;
+      opacity: 0.5;
     }
 
-    /* Scanlines */
+    /* ── Scanline Overlay ── */
     body::after {
       content: '';
       position: fixed;
@@ -55,11 +68,24 @@
         0deg,
         transparent,
         transparent 2px,
-        rgba(0,0,0,0.07) 2px,
-        rgba(0,0,0,0.07) 4px
+        rgba(0,0,0,0.06) 2px,
+        rgba(0,0,0,0.06) 4px
       );
       pointer-events: none;
       z-index: 9999;
+    }
+
+    /* ── Cursor Glow ── */
+    .cursor-glow {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,46,151,0.08) 0%, rgba(255,46,151,0.03) 40%, transparent 70%);
+      pointer-events: none;
+      z-index: 9997;
+      will-change: left, top;
+      transform: translate(-50%, -50%);
     }
 
     /* ── Nav ── */
@@ -71,112 +97,252 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 2rem;
-      height: 60px;
-      background: rgba(8,3,10,0.88);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,45,120,0.12);
+      height: 64px;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(24px) saturate(1.8);
+      -webkit-backdrop-filter: blur(24px) saturate(1.8);
+      border-bottom: 1px solid rgba(255,46,151,0.1);
     }
 
     .nav-back {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.7rem;
       letter-spacing: 0.2em;
-      color: var(--dim);
+      color: var(--pink-muted);
       text-decoration: none;
       text-transform: uppercase;
-      transition: color 0.2s;
+      transition: color 0.3s;
     }
+    .nav-back:hover { color: var(--pink-core); }
 
-    .nav-back:hover { color: var(--pink); }
-    .nav-back::before { content: '← '; }
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
 
     .nav-logo {
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
       font-size: 1rem;
       letter-spacing: 0.4em;
-      color: var(--pink);
-      text-shadow: 0 0 20px rgba(255,45,120,0.6);
+      color: var(--pink-core);
+      text-shadow: 0 0 20px rgba(255,46,151,0.6);
     }
 
-    .nav-badge {
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.65rem;
       letter-spacing: 0.15em;
-      color: var(--dim);
+      color: var(--pink-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      position: relative;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--pink-bright); }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: var(--pink-core);
+      box-shadow: 0 0 6px rgba(255,46,151,0.5);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover::after { width: 60%; }
+
+    .nav-right {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      color: var(--pink-dim);
+    }
+
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .mobile-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--pink-core);
+      transition: transform 0.3s, opacity 0.3s;
     }
 
     /* ── Hero ── */
     .hero {
+      position: relative;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 7rem 2rem 5rem;
-      position: relative;
+      padding: 8rem 2rem 5rem;
+      overflow: hidden;
     }
 
-    .hero-glow {
+    #hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .hero-drift {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -55%);
-      width: 600px;
-      height: 400px;
-      background: radial-gradient(ellipse, rgba(255,45,120,0.1) 0%, rgba(201,16,96,0.05) 40%, transparent 70%);
+      width: 700px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(255,46,151,0.1) 0%, rgba(255,46,151,0.04) 40%, transparent 70%);
       pointer-events: none;
+      z-index: 0;
+      animation: drift 30s ease-in-out infinite;
     }
 
-    .myth-quote {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.2em;
-      color: var(--dim);
-      max-width: 600px;
-      line-height: 1.9;
-      margin-bottom: 2rem;
-      font-style: italic;
+    @keyframes drift {
+      0%   { transform: translate(-50%, -55%) scale(1); }
+      25%  { transform: translate(-40%, -50%) scale(1.05); }
+      50%  { transform: translate(-55%, -45%) scale(0.95); }
+      75%  { transform: translate(-45%, -55%) scale(1.08); }
+      100% { transform: translate(-50%, -55%) scale(1); }
     }
 
-    .myth-quote::before { content: '" '; color: var(--pink); }
-    .myth-quote::after  { content: ' "'; color: var(--pink); }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
 
-    .hero-tag {
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.68rem;
-      letter-spacing: 0.35em;
-      color: var(--dim);
+      letter-spacing: 0.25em;
+      color: var(--pink-muted);
       text-transform: uppercase;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
+      padding: 0.5rem 1.2rem;
+      border: 1px solid rgba(255,46,151,0.15);
+      border-radius: 100px;
+      background: rgba(255,46,151,0.04);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--pink-core);
+      box-shadow: 0 0 8px rgba(255,46,151,0.6);
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(255,46,151,0.6); }
+      50%      { opacity: 0.5; box-shadow: 0 0 16px rgba(255,46,151,0.9), 0 0 30px rgba(255,46,151,0.3); }
     }
 
     .hero-title {
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
-      font-size: clamp(5rem, 14vw, 11rem);
+      font-size: clamp(5rem, 14vw, 12rem);
       letter-spacing: 0.3em;
-      color: var(--pink);
-      text-shadow: 0 0 40px rgba(255,45,120,0.5), 0 0 80px rgba(255,45,120,0.2), 0 0 120px rgba(255,45,120,0.08);
       line-height: 1;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
+      color: var(--pink-core);
+      text-shadow: 0 0 40px rgba(255,46,151,0.5), 0 0 80px rgba(255,46,151,0.2), 0 0 140px rgba(255,46,151,0.08);
     }
 
-    .hero-tagline {
+    .hero-title .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(60px) rotateX(90deg);
+      filter: blur(8px);
+      animation: charReveal 0.8s var(--bounce) forwards;
+    }
+
+    @keyframes charReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg);
+        filter: blur(0);
+      }
+    }
+
+    .hero-subtitle {
       font-family: 'Rajdhani', sans-serif;
       font-weight: 600;
-      font-size: clamp(0.9rem, 2.2vw, 1.25rem);
-      color: var(--pink3);
-      letter-spacing: 0.12em;
+      font-size: clamp(0.95rem, 2.2vw, 1.3rem);
+      color: var(--pink-bright);
+      letter-spacing: 0.15em;
       margin-bottom: 1rem;
+      position: relative;
     }
 
-    .hero-sub {
-      font-size: 1rem;
-      color: var(--dim);
-      max-width: 500px;
-      margin-bottom: 3rem;
+    /* Glitch Effect */
+    .glitch {
+      position: relative;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+    }
+    .glitch::before {
+      color: var(--pink-vivid);
+      animation: glitch1 8s infinite;
+    }
+    .glitch::after {
+      color: var(--pink-core);
+      animation: glitch2 8s infinite;
+    }
+
+    @keyframes glitch1 {
+      0%, 90%, 100% { opacity: 0; }
+      91% { opacity: 0.8; clip-path: inset(20% 0 30% 0); transform: translateX(-4px); }
+      93% { opacity: 0; }
+      94% { opacity: 0.6; clip-path: inset(50% 0 10% 0); transform: translateX(3px); }
+      96% { opacity: 0; }
+    }
+
+    @keyframes glitch2 {
+      0%, 88%, 100% { opacity: 0; }
+      89% { opacity: 0.6; clip-path: inset(40% 0 20% 0); transform: translateX(4px); }
+      91% { opacity: 0; }
+      95% { opacity: 0.8; clip-path: inset(10% 0 60% 0); transform: translateX(-3px); }
+      97% { opacity: 0; }
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--pink-muted);
+      max-width: 560px;
+      margin: 0 auto 3rem;
       line-height: 1.8;
     }
 
@@ -185,31 +351,126 @@
       gap: 3rem;
       justify-content: center;
       flex-wrap: wrap;
+      margin-bottom: 2.5rem;
     }
 
-    .stat { text-align: center; }
+    .stat {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .stat.visible {
+      animation: bounceIn 0.7s var(--bounce) forwards;
+    }
+
+    @keyframes bounceIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     .stat-num {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2.2rem;
+      font-size: 2.4rem;
       font-weight: 700;
-      color: var(--pink);
-      text-shadow: 0 0 20px rgba(255,45,120,0.5);
       display: block;
+      background: linear-gradient(135deg, var(--pink-core), var(--pink-vivid));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(255,46,151,0.4));
     }
 
     .stat-label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       letter-spacing: 0.2em;
-      color: var(--dim);
+      color: var(--pink-dim);
       text-transform: uppercase;
     }
 
-    /* ── Common section ── */
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      border-radius: 4px;
+      text-decoration: none;
+      background: transparent;
+      border: 2px solid var(--pink-core);
+      color: var(--pink-core);
+      transition: background 0.3s, box-shadow 0.3s, transform 0.15s;
+      margin-bottom: 2rem;
+    }
+
+    .hero-cta:hover {
+      background: rgba(255,46,151,0.12);
+      box-shadow: 0 0 30px rgba(255,46,151,0.35), 0 0 60px rgba(255,46,151,0.15);
+      transform: translateY(-2px);
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.4;
+    }
+
+    .scroll-indicator span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--pink-muted);
+    }
+
+    .scroll-arrow {
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(180deg, var(--pink-core), transparent);
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { opacity: 0.4; transform: scaleY(1) translateY(0); }
+      50%      { opacity: 1; transform: scaleY(1.2) translateY(6px); }
+    }
+
+    /* ── Gradient Divider ── */
+    .gradient-divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,46,151,0.06), rgba(255,46,151,0.2), rgba(255,46,151,0.06), transparent);
+      box-shadow: 0 0 8px rgba(255,46,151,0.1);
+      margin: 0 2rem;
+    }
+
+    /* ── Shimmer Line ── */
+    .shimmer-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,46,151,0.3), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 3s linear infinite;
+      margin: 3rem auto;
+      max-width: 300px;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* ── Common Section ── */
     .section {
-      padding: 6rem 2rem;
-      max-width: 1100px;
+      padding: 7rem 2rem;
+      max-width: 1140px;
       margin: 0 auto;
     }
 
@@ -217,48 +478,72 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.68rem;
       letter-spacing: 0.4em;
-      color: var(--pink);
+      color: var(--pink-core);
       text-transform: uppercase;
       margin-bottom: 0.6rem;
     }
 
     .s-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
       font-weight: 700;
       letter-spacing: 0.05em;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, var(--pink-core), var(--pink-vivid));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(255,46,151,0.4));
     }
 
     .s-desc {
-      color: var(--dim);
+      color: var(--pink-muted);
       font-size: 1.05rem;
       max-width: 600px;
       margin-bottom: 3rem;
     }
 
-    hr.div {
-      border: none;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,45,120,0.15), transparent);
-      margin: 0 2rem;
+    /* ── Scroll Reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 0.8s ease, transform 0.8s var(--bounce), filter 0.8s ease;
+      filter: blur(4px);
+    }
+    .reveal.reveal-left {
+      transform: translateX(-60px);
+    }
+    .reveal.reveal-right {
+      transform: translateX(60px);
+    }
+    .reveal.reveal-scale {
+      transform: scale(0.9);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0) translateX(0) scale(1);
+      filter: blur(0);
     }
 
-    /* ── Module grid ── */
+    .stagger-children .reveal {
+      transition-delay: calc(var(--child-i, 0) * 0.03s);
+    }
+
+    /* ── Module Grid (3D Cards) ── */
     .module-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 1.5rem;
     }
 
     .module-card {
       padding: 2rem;
-      background: rgba(255,45,120,0.03);
-      border: 1px solid rgba(255,45,120,0.1);
-      border-radius: 8px;
+      background: rgba(255,46,151,0.02);
+      border: 1px solid rgba(255,46,151,0.1);
+      border-radius: 10px;
       position: relative;
       overflow: hidden;
-      transition: border-color 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
+      transform-style: preserve-3d;
+      transition: border-color 0.4s, background 0.4s, transform 0.4s ease, box-shadow 0.4s ease;
     }
 
     .module-card::before {
@@ -266,28 +551,40 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 2px;
-      background: linear-gradient(90deg, transparent, var(--pink), transparent);
+      background: linear-gradient(90deg, transparent, var(--pink-core), transparent);
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.4s;
+    }
+
+    .module-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      background: radial-gradient(circle at 50% 0%, rgba(255,46,151,0.08) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
     }
 
     .module-card:hover {
-      border-color: rgba(255,45,120,0.3);
-      background: rgba(255,45,120,0.06);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 50px -10px rgba(255,45,120,0.15);
+      border-color: rgba(255,46,151,0.35);
+      background: rgba(255,46,151,0.05);
+      transform: perspective(800px) rotateX(2deg) rotateY(5deg) translateY(-6px);
+      box-shadow: 0 0 20px rgba(255,46,151,0.3), 0 0 60px rgba(255,46,151,0.15), inset 0 0 20px rgba(255,46,151,0.04);
     }
 
     .module-card:hover::before { opacity: 1; }
+    .module-card:hover::after { opacity: 1; }
 
-    .module-glyph { font-size: 2rem; margin-bottom: 1rem; }
+    .module-glyph { font-size: 2.2rem; margin-bottom: 1rem; }
 
     .module-name {
       font-family: 'Orbitron', sans-serif;
       font-size: 1rem;
       font-weight: 700;
       letter-spacing: 0.2em;
-      color: var(--pink3);
+      color: var(--pink-bright);
       margin-bottom: 0.35rem;
     }
 
@@ -295,15 +592,15 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.65rem;
       letter-spacing: 0.15em;
-      color: var(--dim);
+      color: var(--pink-dim);
       text-transform: uppercase;
       margin-bottom: 0.75rem;
     }
 
     .module-desc {
       font-size: 0.92rem;
-      color: #80405a;
-      line-height: 1.65;
+      color: var(--pink-muted);
+      line-height: 1.7;
     }
 
     .module-tags {
@@ -317,168 +614,163 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.58rem;
       padding: 0.2rem 0.6rem;
-      background: rgba(255,45,120,0.08);
-      border: 1px solid rgba(255,45,120,0.2);
+      background: rgba(255,46,151,0.08);
+      border: 1px solid rgba(255,46,151,0.2);
       border-radius: 3px;
-      color: var(--pink3);
+      color: var(--pink-bright);
       letter-spacing: 0.1em;
     }
 
-    /* ── Academy / CTF ── */
-    .ctf-layout {
+    /* ── Academy Track Cards ── */
+    .academy-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: start;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
     }
 
-    .pixel-demo {
-      background: var(--bg2);
-      border: 1px solid rgba(255,45,120,0.12);
-      border-radius: 8px;
-      padding: 1.5rem;
+    .track-card {
+      padding: 1.75rem;
+      background: rgba(255,46,151,0.02);
+      border: 1px solid rgba(255,46,151,0.1);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: border-color 0.4s, background 0.4s, transform 0.4s ease, box-shadow 0.4s ease;
     }
 
-    .pixel-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.25em;
-      color: var(--dim);
-      text-transform: uppercase;
-      margin-bottom: 1rem;
+    .track-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      background: radial-gradient(circle at 50% 0%, rgba(255,46,151,0.08) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
     }
 
-    .pixel-grid {
-      display: grid;
-      grid-template-columns: repeat(16, 1fr);
-      gap: 2px;
-      margin-bottom: 1rem;
+    .track-card:hover {
+      border-color: rgba(255,46,151,0.35);
+      background: rgba(255,46,151,0.05);
+      transform: perspective(800px) rotateX(2deg) rotateY(3deg) translateY(-4px);
+      box-shadow: 0 0 20px rgba(255,46,151,0.3), 0 0 60px rgba(255,46,151,0.15), inset 0 0 20px rgba(255,46,151,0.04);
     }
 
-    .pixel {
-      aspect-ratio: 1;
-      border-radius: 1px;
-    }
+    .track-card:hover::after { opacity: 1; }
 
-    /* LSB visualization rows */
-    .lsb-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.6rem;
-    }
-
-    .lsb-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--dim);
-      width: 60px;
-      flex-shrink: 0;
-    }
-
-    .lsb-bits {
-      display: flex;
-      gap: 2px;
-      flex: 1;
-    }
-
-    .bit {
-      width: 14px; height: 14px;
-      border-radius: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.5rem;
-      font-weight: 700;
-    }
-
-    .bit-1 { background: rgba(255,45,120,0.5); color: var(--pink3); }
-    .bit-0 { background: rgba(255,45,120,0.08); color: var(--dim); }
-    .bit-h { background: rgba(255,45,120,0.9); color: #fff; box-shadow: 0 0 6px rgba(255,45,120,0.6); }
-
-    .challenge-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      margin-top: 1.25rem;
-    }
-
-    .challenge {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      background: rgba(255,45,120,0.04);
-      border: 1px solid rgba(255,45,120,0.1);
-      border-radius: 5px;
-      transition: border-color 0.2s;
-    }
-
-    .challenge:hover { border-color: rgba(255,45,120,0.3); }
-
-    .ch-icon { font-size: 1rem; }
-
-    .ch-info { flex: 1; }
-
-    .ch-name {
+    .track-num {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--pink3);
-      letter-spacing: 0.08em;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--pink-dim);
+      margin-bottom: 0.75rem;
     }
 
-    .ch-meta {
+    .track-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--pink-bright);
+      margin-bottom: 0.5rem;
+    }
+
+    .track-desc {
+      font-size: 0.88rem;
+      color: var(--pink-muted);
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+
+    .track-meta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .track-meta span {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.58rem;
-      color: var(--dim);
       letter-spacing: 0.1em;
+      color: var(--pink-dim);
+      padding: 0.2rem 0.5rem;
+      border: 1px solid rgba(255,46,151,0.12);
+      border-radius: 3px;
     }
 
-    .ch-xp {
+    .academy-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .af-item {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--pink);
-      font-weight: 700;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--pink-bright);
+      padding: 0.4rem 1rem;
+      background: rgba(255,46,151,0.06);
+      border: 1px solid rgba(255,46,151,0.15);
+      border-radius: 4px;
     }
 
-    /* ── Features grid ── */
+    /* ── Features Grid ── */
     .feat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
     }
 
     .feat-card {
-      padding: 1.5rem;
-      background: rgba(255,45,120,0.02);
-      border: 1px solid rgba(255,45,120,0.08);
-      border-radius: 8px;
-      transition: border-color 0.3s, background 0.3s, transform 0.3s;
+      padding: 1.75rem;
+      background: rgba(255,46,151,0.02);
+      border: 1px solid rgba(255,46,151,0.08);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: border-color 0.4s, background 0.4s, transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .feat-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      background: radial-gradient(circle at 50% 0%, rgba(255,46,151,0.08) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
     }
 
     .feat-card:hover {
-      border-color: rgba(255,45,120,0.25);
-      background: rgba(255,45,120,0.05);
-      transform: translateY(-2px);
+      border-color: rgba(255,46,151,0.3);
+      background: rgba(255,46,151,0.05);
+      transform: perspective(800px) rotateX(2deg) rotateY(3deg) translateY(-4px);
+      box-shadow: 0 0 20px rgba(255,46,151,0.3), 0 0 60px rgba(255,46,151,0.15), inset 0 0 20px rgba(255,46,151,0.04);
     }
 
-    .feat-icon { font-size: 1.4rem; margin-bottom: 0.75rem; }
+    .feat-card:hover::after { opacity: 1; }
+
+    .feat-icon { font-size: 1.6rem; margin-bottom: 0.75rem; }
 
     .feat-name {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: var(--pink3);
-      margin-bottom: 0.4rem;
+      color: var(--pink-bright);
+      margin-bottom: 0.5rem;
     }
 
     .feat-desc {
       font-size: 0.88rem;
-      color: var(--dim);
-      line-height: 1.6;
+      color: var(--pink-muted);
+      line-height: 1.65;
     }
 
     /* ── Stack ── */
@@ -491,90 +783,39 @@
     .stack-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.72rem;
-      padding: 0.4rem 1rem;
+      padding: 0.5rem 1.2rem;
       border-radius: 4px;
       letter-spacing: 0.1em;
-      background: rgba(255,45,120,0.06);
-      border: 1px solid rgba(255,45,120,0.2);
-      color: var(--pink3);
-      transition: background 0.2s, border-color 0.2s;
+      background: rgba(255,46,151,0.06);
+      border: 1px solid rgba(255,46,151,0.2);
+      color: var(--pink-bright);
+      transition: background 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
     }
 
     .stack-tag:hover {
-      background: rgba(255,45,120,0.12);
-      border-color: rgba(255,45,120,0.4);
-    }
-
-    /* ── CTA ── */
-    .cta-btn {
-      display: inline-block;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      padding: 0.9rem 2.5rem;
-      border-radius: 4px;
-      text-decoration: none;
-      background: transparent;
-      border: 2px solid var(--pink);
-      color: var(--pink);
-      transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
-    }
-
-    .cta-btn:hover {
-      background: rgba(255,45,120,0.12);
-      box-shadow: 0 0 30px rgba(255,45,120,0.35);
+      background: rgba(255,46,151,0.12);
+      border-color: rgba(255,46,151,0.4);
       transform: translateY(-2px);
-    }
-
-    /* ── Scroll hint ── */
-    .scroll-hint {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      opacity: 0.35;
-    }
-
-    .scroll-hint span {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--pink);
-    }
-
-    .scroll-arrow {
-      width: 1px;
-      height: 36px;
-      background: linear-gradient(180deg, var(--pink), transparent);
-      animation: pulse 1.8s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%,100% { opacity:0.4; transform:scaleY(1); }
-      50%      { opacity:1;   transform:scaleY(1.15); }
+      box-shadow: 0 0 12px rgba(255,46,151,0.2);
     }
 
     /* ── Footer ── */
     footer {
       text-align: center;
-      padding: 3rem 2rem;
-      border-top: 1px solid rgba(255,45,120,0.06);
+      padding: 4rem 2rem;
+      border-top: 1px solid rgba(255,46,151,0.08);
+      position: relative;
     }
 
     .footer-logo {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.4rem;
+      font-size: 1.6rem;
       font-weight: 900;
       letter-spacing: 0.5em;
-      color: var(--pink);
-      text-shadow: 0 0 25px rgba(255,45,120,0.5);
+      background: linear-gradient(135deg, var(--pink-core), var(--pink-vivid));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 12px rgba(255,46,151,0.5));
       margin-bottom: 0.5rem;
     }
 
@@ -582,411 +823,671 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.62rem;
       letter-spacing: 0.2em;
-      color: var(--dim);
+      color: var(--pink-dim);
       margin-bottom: 1.5rem;
     }
 
-    .footer-back {
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.68rem;
       letter-spacing: 0.15em;
-      color: var(--dim);
+      color: var(--pink-muted);
       text-decoration: none;
       text-transform: uppercase;
-      transition: color 0.2s;
+      transition: color 0.3s;
     }
 
-    .footer-back:hover { color: var(--pink); }
+    .footer-links a:hover { color: var(--pink-core); }
 
+    /* ── Reduced Motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+      .reveal { opacity: 1; transform: none; filter: none; }
+      .hero-title .char { opacity: 1; transform: none; filter: none; }
+      .stat { opacity: 1; transform: none; }
+    }
+
+    /* ── Mobile ── */
     @media (max-width: 768px) {
       nav { padding: 0 1.25rem; }
-      .nav-badge { display: none; }
-      .section { padding: 4rem 1.25rem; }
+
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.95);
+        backdrop-filter: blur(24px);
+        padding: 2rem;
+        gap: 1.5rem;
+        border-bottom: 1px solid rgba(255,46,151,0.15);
+      }
+
+      .nav-right { display: none; }
+
+      .mobile-toggle { display: flex; }
+
+      .hero { padding: 7rem 1.25rem 4rem; }
+      .hero-title { letter-spacing: 0.15em; }
+
+      .section { padding: 5rem 1.25rem; }
       .module-grid { grid-template-columns: 1fr; }
-      .ctf-layout { grid-template-columns: 1fr; }
+      .academy-grid { grid-template-columns: 1fr; }
       .feat-grid { grid-template-columns: 1fr; }
+
+      .hero-stats { gap: 1.5rem; }
+      .stat-num { font-size: 1.8rem; }
+
+      .cursor-glow { display: none; }
     }
   </style>
 </head>
 <body>
 
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Cursor Glow -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- Navigation -->
   <nav>
-    <a class="nav-back" href="/suite/">PHANTOM Suite</a>
-    <div class="nav-logo">ECHO</div>
-    <span class="nav-badge">v2.0 // Steganography Suite</span>
+    <a class="nav-back" href="/suite/">&larr; PHANTOM Suite</a>
+    <div class="nav-center">
+      <div class="nav-logo">ECHO</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#modules">Modules</a></li>
+        <li><a href="#academy">Academy</a></li>
+        <li><a href="#stack">Stack</a></li>
+      </ul>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="nav-right">v2.0</span>
   </nav>
 
-  <!-- Hero -->
-  <div class="hero">
-    <div class="hero-glow"></div>
+  <!-- ═══════════════════ HERO ═══════════════════ -->
+  <section class="hero" id="overview">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-drift"></div>
 
-    <p class="myth-quote">Echo was the nymph cursed to only repeat others' words — her true voice hidden within existing sounds, invisible to those who could not listen closely enough.</p>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        ACTIVE &mdash; STEGANOGRAPHY SUITE
+      </div>
 
-    <p class="hero-tag">// The Hidden Voice</p>
-    <h1 class="hero-title">ECHO</h1>
-    <p class="hero-tagline">Steganography &amp; Data Concealment Suite</p>
-    <p class="hero-sub">
-      Hide messages in plain sight. Detect the invisible. Analyze what the eye cannot see.
-    </p>
+      <h1 class="hero-title" id="heroTitle" aria-label="ECHO">ECHO</h1>
 
-    <div class="hero-stats">
-      <div class="stat">
-        <span class="stat-num">5</span>
-        <span class="stat-label">Modules</span>
+      <p class="hero-subtitle glitch" data-text="Encrypted Concealment &amp; Hidden Operations">Encrypted Concealment &amp; Hidden Operations</p>
+
+      <p class="hero-desc">The hidden voice in the data. Embed secrets in images, encrypt with military-grade ciphers, detect concealed messages, and master the art of digital steganography.</p>
+
+      <div class="hero-stats" id="heroStats">
+        <div class="stat" style="--delay:0">
+          <span class="stat-num">4</span>
+          <span class="stat-label">Modules</span>
+        </div>
+        <div class="stat" style="--delay:1">
+          <span class="stat-num">3</span>
+          <span class="stat-label">Ciphers</span>
+        </div>
+        <div class="stat" style="--delay:2">
+          <span class="stat-num">8</span>
+          <span class="stat-label">Analysis Tests</span>
+        </div>
+        <div class="stat" style="--delay:3">
+          <span class="stat-num">12</span>
+          <span class="stat-label">Lessons</span>
+        </div>
       </div>
-      <div class="stat">
-        <span class="stat-num">LSB</span>
-        <span class="stat-label">Encoding</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">8</span>
-        <span class="stat-label">Detection Tests</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">CTF</span>
-        <span class="stat-label">Challenges</span>
-      </div>
+
+      <a class="hero-cta magnetic-btn" href="https://github.com/EmperorBadussy/ECHO" target="_blank" rel="noopener noreferrer">View on GitHub</a>
     </div>
 
-    <div class="scroll-hint">
+    <div class="scroll-indicator">
       <span>Scroll</span>
       <div class="scroll-arrow"></div>
     </div>
-  </div>
+  </section>
 
-  <hr class="div" />
+  <hr class="gradient-divider" />
 
-  <!-- Modules -->
-  <div class="section" id="modules">
-    <p class="s-tag">// Architecture</p>
-    <h2 class="s-title">The Modules</h2>
-    <p class="s-desc">Five specialist chambers, each mastering a dimension of data concealment.</p>
+  <!-- ═══════════════════ MODULES ═══════════════════ -->
+  <section class="section" id="modules">
+    <div class="reveal">
+      <p class="s-tag">// Architecture</p>
+      <h2 class="s-title">THE CHAMBERS</h2>
+      <p class="s-desc">Four chambers of concealment.</p>
+    </div>
 
-    <div class="module-grid">
+    <div class="shimmer-line"></div>
 
-      <div class="module-card">
-        <div class="module-glyph">🤫</div>
+    <div class="module-grid stagger-children">
+
+      <div class="module-card reveal" style="--child-i:0">
+        <div class="module-glyph">&#129323;</div>
         <div class="module-name">WHISPER</div>
-        <div class="module-role">Encode</div>
-        <p class="module-desc">Embed secret messages into images using LSB steganography. Choose bit depth, channel, and encryption layer before writing.</p>
+        <div class="module-role">Steganographic Encoder</div>
+        <p class="module-desc">Select an image, type a message, embed it using LSB encoding. Shows capacity analysis and image preview with before/after comparison.</p>
         <div class="module-tags">
-          <span class="mtag">LSB</span>
-          <span class="mtag">Image Encode</span>
-          <span class="mtag">Encrypt</span>
-          <span class="mtag">PNG/BMP</span>
+          <span class="mtag">LSB Encoding</span>
+          <span class="mtag">Image Preview</span>
+          <span class="mtag">Capacity Analysis</span>
+          <span class="mtag">PNG / BMP</span>
         </div>
       </div>
 
-      <div class="module-card">
-        <div class="module-glyph">👂</div>
+      <div class="module-card reveal" style="--child-i:1">
+        <div class="module-glyph">&#128066;</div>
         <div class="module-name">LISTEN</div>
-        <div class="module-role">Decode</div>
-        <p class="module-desc">Extract hidden data from carrier images. Automatic detection of encoding parameters, hash verification, and decryption.</p>
+        <div class="module-role">Message Extractor</div>
+        <p class="module-desc">Load a stego image, extract hidden data, save decoded messages. Supports multiple encoding methods with automatic detection.</p>
         <div class="module-tags">
-          <span class="mtag">Extract</span>
-          <span class="mtag">Auto-detect</span>
+          <span class="mtag">Auto-Detect</span>
+          <span class="mtag">Multi-Method</span>
           <span class="mtag">Decrypt</span>
-          <span class="mtag">Hash Check</span>
+          <span class="mtag">Export</span>
         </div>
       </div>
 
-      <div class="module-card">
-        <div class="module-glyph">🔦</div>
+      <div class="module-card reveal" style="--child-i:2">
+        <div class="module-glyph">&#128269;</div>
         <div class="module-name">REVEAL</div>
-        <div class="module-role">Detect</div>
-        <p class="module-desc">8-test statistical analysis pipeline. Chi-squared tests, histogram anomalies, LSB randomness, and entropy analysis detect hidden payloads.</p>
+        <div class="module-role">Forensic Analyzer</div>
+        <p class="module-desc">8 detection tests: LSB analysis, chi-square test, entropy mapping, visual attack, histogram comparison, noise analysis, bit plane extraction, spectral analysis.</p>
         <div class="module-tags">
-          <span class="mtag">Chi-squared</span>
+          <span class="mtag">Chi-Square</span>
           <span class="mtag">Entropy</span>
           <span class="mtag">Histogram</span>
-          <span class="mtag">LSB Analysis</span>
+          <span class="mtag">Spectral</span>
         </div>
       </div>
 
-      <div class="module-card">
-        <div class="module-glyph">🔬</div>
+      <div class="module-card reveal" style="--child-i:3">
+        <div class="module-glyph">&#128300;</div>
         <div class="module-name">INSPECT</div>
-        <div class="module-role">Forensics</div>
-        <p class="module-desc">Deep image forensics. Hex viewer, metadata extraction, EXIF analysis, color channel isolation, and image comparison tools.</p>
+        <div class="module-role">Binary Forensics</div>
+        <p class="module-desc">Real MD5/SHA256 hashing via Node crypto, hex viewer with ASCII sidebar, file metadata, magic byte detection.</p>
         <div class="module-tags">
+          <span class="mtag">MD5 / SHA256</span>
           <span class="mtag">Hex Viewer</span>
-          <span class="mtag">EXIF</span>
+          <span class="mtag">Magic Bytes</span>
           <span class="mtag">Metadata</span>
-          <span class="mtag">Channel Split</span>
         </div>
       </div>
 
-      <div class="module-card">
-        <div class="module-glyph">🔒</div>
+      <div class="module-card reveal" style="--child-i:4">
+        <div class="module-glyph">&#128274;</div>
         <div class="module-name">CHAMBER</div>
-        <div class="module-role">Encryption</div>
-        <p class="module-desc">Pre-encode encryption layer. AES-256, XOR, and custom cipher support before LSB embedding for maximum data security.</p>
+        <div class="module-role">Encryption Engine</div>
+        <p class="module-desc">AES-256-CBC, AES-256-GCM, and ChaCha20-Poly1305. Passphrase-based key derivation, encrypt/decrypt any data.</p>
         <div class="module-tags">
-          <span class="mtag">AES-256</span>
-          <span class="mtag">XOR</span>
-          <span class="mtag">Custom Cipher</span>
-          <span class="mtag">Key Gen</span>
+          <span class="mtag">AES-256-CBC</span>
+          <span class="mtag">AES-256-GCM</span>
+          <span class="mtag">ChaCha20</span>
+          <span class="mtag">PBKDF</span>
         </div>
       </div>
 
     </div>
-  </div>
+  </section>
 
-  <hr class="div" />
+  <hr class="gradient-divider" />
 
-  <!-- Academy / CTF -->
-  <div class="section" id="academy">
-    <p class="s-tag">// CTF Training</p>
-    <h2 class="s-title">The Academy</h2>
-    <p class="s-desc">CTF-style challenges built into the tool. Find the hidden message. Earn the flag.</p>
+  <!-- ═══════════════════ ACADEMY ═══════════════════ -->
+  <section class="section" id="academy">
+    <div class="reveal">
+      <p class="s-tag">// Training Ground</p>
+      <h2 class="s-title">THE ACADEMY</h2>
+      <p class="s-desc">Hide. Seek. Master.</p>
+    </div>
 
-    <div class="ctf-layout">
+    <p class="reveal" style="color:var(--pink-muted); max-width:640px; margin-bottom:2.5rem; line-height:1.8;">
+      A gamified learning environment with XP, levels, CTF-style challenges, and achievement badges. Four tracks take you from steganography fundamentals to advanced concealment techniques.
+    </p>
 
-      <div>
-        <p style="color:#80405a; line-height:1.8; margin-bottom:1.25rem;">
-          ECHO's Academy presents real steganography CTF challenges in an interactive learning environment. Each challenge hides data inside actual image files — your job is to find it.
-        </p>
-        <p style="color:#80405a; line-height:1.8; margin-bottom:1.25rem;">
-          Challenges escalate from basic LSB extraction to multi-layer encoded images with encryption, noise injection, and red herrings. The pixel grid visualization shows you exactly where bits are being modified.
-        </p>
-        <p style="color: var(--pink3); font-family:'JetBrains Mono',monospace; font-size:0.78rem; margin-bottom:2rem;">
-          The secret was always there. You just needed to look closer.
-        </p>
+    <div class="shimmer-line"></div>
 
-        <div class="challenge-list">
-          <div class="challenge">
-            <span class="ch-icon">🟢</span>
-            <div class="ch-info">
-              <div class="ch-name">Whisper in the Noise</div>
-              <div class="ch-meta">BEGINNER • LSB Extraction</div>
-            </div>
-            <span class="ch-xp">+150 XP</span>
-          </div>
-          <div class="challenge">
-            <span class="ch-icon">🟡</span>
-            <div class="ch-info">
-              <div class="ch-name">The Encrypted Pixel</div>
-              <div class="ch-meta">INTERMEDIATE • LSB + AES</div>
-            </div>
-            <span class="ch-xp">+400 XP</span>
-          </div>
-          <div class="challenge">
-            <span class="ch-icon">🟠</span>
-            <div class="ch-info">
-              <div class="ch-name">Red Herring Gallery</div>
-              <div class="ch-meta">ADVANCED • Multi-layer + Decoy</div>
-            </div>
-            <span class="ch-xp">+750 XP</span>
-          </div>
-          <div class="challenge">
-            <span class="ch-icon">🔴</span>
-            <div class="ch-info">
-              <div class="ch-name">Echo's Curse</div>
-              <div class="ch-meta">EXPERT • Unknown method</div>
-            </div>
-            <span class="ch-xp">+2000 XP</span>
-          </div>
+    <div class="academy-grid stagger-children">
+
+      <div class="track-card reveal" style="--child-i:0">
+        <div class="track-num">01</div>
+        <div class="track-name">Steganography Foundations</div>
+        <p class="track-desc">History, techniques, LSB encoding, spatial domain methods. The fundamentals of hiding data in plain sight.</p>
+        <div class="track-meta">
+          <span>3 Lessons</span>
+          <span>2 Challenges</span>
+          <span>450 XP</span>
         </div>
       </div>
 
-      <div class="pixel-demo">
-        <div class="pixel-title">LSB Visualization — Carrier Image</div>
+      <div class="track-card reveal" style="--child-i:1">
+        <div class="track-num">02</div>
+        <div class="track-name">Cryptography Essentials</div>
+        <p class="track-desc">Symmetric vs asymmetric, AES deep dive, key exchange protocols, hashing algorithms.</p>
+        <div class="track-meta">
+          <span>3 Lessons</span>
+          <span>2 Challenges</span>
+          <span>500 XP</span>
+        </div>
+      </div>
 
-        <!-- Pixel grid simulation -->
-        <div class="pixel-grid">
-          <!-- Row 1: "clean" pixels -->
-          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.28)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.22)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.30)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.26)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.24)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.27)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.23)"></div>
-          <!-- Row 1: "encoded" pixels — slightly brighter -->
-          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.62);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.28)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.24)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.26)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.29)"></div>
-          <!-- rows 2-5 -->
-          <div class="pixel" style="background:rgba(255,45,120,0.22)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.27)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.62);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.24)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.26)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.28)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.23)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.30)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.62);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.27)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.24)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.26)"></div>
-          <!-- row 3 -->
-          <div class="pixel" style="background:rgba(255,45,120,0.28)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.22)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.27)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.24)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.62);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.23)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.29)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.26)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.28)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.22)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.30)"></div>
-          <div class="pixel" style="background:rgba(255,45,120,0.62);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+      <div class="track-card reveal" style="--child-i:2">
+        <div class="track-num">03</div>
+        <div class="track-name">Digital Forensics</div>
+        <p class="track-desc">Detecting hidden data, statistical analysis methods, steganalysis tools and techniques.</p>
+        <div class="track-meta">
+          <span>3 Lessons</span>
+          <span>3 Challenges</span>
+          <span>650 XP</span>
         </div>
+      </div>
 
-        <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--dim);margin-bottom:1rem;">
-          <span style="color:var(--pink)">■</span> LSB-modified pixels &nbsp;&nbsp;
-          <span style="background:rgba(255,45,120,0.25);display:inline-block;width:10px;height:10px;border-radius:1px;vertical-align:middle;"></span> Unmodified
+      <div class="track-card reveal" style="--child-i:3">
+        <div class="track-num">04</div>
+        <div class="track-name">Advanced Concealment</div>
+        <p class="track-desc">Frequency domain hiding, spread spectrum techniques, network steganography.</p>
+        <div class="track-meta">
+          <span>3 Lessons</span>
+          <span>3 Challenges</span>
+          <span>900 XP</span>
         </div>
+      </div>
 
-        <!-- Bit breakdown -->
-        <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.2em;margin-bottom:0.75rem;text-transform:uppercase;">Bit Plane — Channel R</div>
+    </div>
 
-        <div class="lsb-row">
-          <div class="lsb-label">Pixel 8:</div>
-          <div class="lsb-bits">
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-0">0</div>
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-0">0</div>
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-0">0</div>
-            <div class="bit bit-h">1</div>
-          </div>
-        </div>
-        <div class="lsb-row">
-          <div class="lsb-label">Pixel 10:</div>
-          <div class="lsb-bits">
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-0">0</div>
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-0">0</div>
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-0">0</div>
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-h">0</div>
-          </div>
-        </div>
-        <div class="lsb-row">
-          <div class="lsb-label">Pixel 14:</div>
-          <div class="lsb-bits">
-            <div class="bit bit-0">0</div>
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-0">0</div>
-            <div class="bit bit-0">0</div>
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-1">1</div>
-            <div class="bit bit-h">0</div>
-          </div>
-        </div>
-
-        <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--dim);margin-top:0.75rem;">
-          LSB sequence: <span style="color:var(--pink3)">1 0 0 ...</span> → <span style="color:var(--pink)">"H"</span>
-        </div>
+    <div class="reveal" style="margin-top:2rem;">
+      <p style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.2em; color:var(--pink-dim); text-transform:uppercase; margin-bottom:1rem;">Academy Features</p>
+      <div class="academy-features">
+        <span class="af-item">Interactive LSB Pixel Grid</span>
+        <span class="af-item">Image Comparison Slider</span>
+        <span class="af-item">CTF-Style Challenges</span>
+        <span class="af-item">Achievement System</span>
+        <span class="af-item">XP &amp; Levels</span>
       </div>
     </div>
-  </div>
+  </section>
 
-  <hr class="div" />
+  <hr class="gradient-divider" />
 
-  <!-- Features -->
-  <div class="section" id="features">
-    <p class="s-tag">// Capabilities</p>
-    <h2 class="s-title">Features</h2>
-    <p class="s-desc">The full forensic toolkit for steganography operators.</p>
+  <!-- ═══════════════════ CAPABILITIES ═══════════════════ -->
+  <section class="section" id="features">
+    <div class="reveal">
+      <p class="s-tag">// Toolkit</p>
+      <h2 class="s-title">CAPABILITIES</h2>
+      <p class="s-desc">Every tool for the art of digital concealment.</p>
+    </div>
 
-    <div class="feat-grid">
-      <div class="feat-card">
-        <div class="feat-icon">🔢</div>
-        <div class="feat-name">LSB Encoding</div>
-        <p class="feat-desc">Least Significant Bit encoding across R, G, B channels. Configurable bit depth — 1 to 4 bits per channel.</p>
+    <div class="shimmer-line"></div>
+
+    <div class="feat-grid stagger-children">
+      <div class="feat-card reveal" style="--child-i:0">
+        <div class="feat-icon">&#128290;</div>
+        <div class="feat-name">Real LSB Encoding</div>
+        <p class="feat-desc">Actually embeds data into image pixel least significant bits. Configurable channels and bit depth.</p>
       </div>
-      <div class="feat-card">
-        <div class="feat-icon">✅</div>
-        <div class="feat-name">Hash Verification</div>
-        <p class="feat-desc">SHA-256 hash embedded alongside payload. Verify data integrity on extraction. Detect tampering automatically.</p>
+      <div class="feat-card reveal" style="--child-i:1">
+        <div class="feat-icon">&#128737;</div>
+        <div class="feat-name">Military-Grade Encryption</div>
+        <p class="feat-desc">AES-256-CBC, AES-256-GCM, and ChaCha20-Poly1305 implementations with PBKDF2 key derivation.</p>
       </div>
-      <div class="feat-card">
-        <div class="feat-icon">🔍</div>
-        <div class="feat-name">Hex Viewer</div>
-        <p class="feat-desc">Full hex dump of carrier images. Navigate byte-by-byte, highlight regions, and annotate suspicious patterns.</p>
+      <div class="feat-card reveal" style="--child-i:2">
+        <div class="feat-icon">&#129514;</div>
+        <div class="feat-name">8 Forensic Tests</div>
+        <p class="feat-desc">Chi-squared, entropy, histogram, RS analysis, LSB randomness, visual attack, bit plane, and spectral analysis.</p>
       </div>
-      <div class="feat-card">
-        <div class="feat-icon">🧪</div>
-        <div class="feat-name">8 Detection Tests</div>
-        <p class="feat-desc">Chi-squared, entropy analysis, histogram anomaly, RS analysis, LSB randomness, and four more statistical tests.</p>
+      <div class="feat-card reveal" style="--child-i:3">
+        <div class="feat-icon">&#128270;</div>
+        <div class="feat-name">Binary Forensics</div>
+        <p class="feat-desc">Real MD5/SHA256 hash computation, hex viewer with ASCII sidebar, magic byte detection.</p>
       </div>
-      <div class="feat-card">
-        <div class="feat-icon">🖼️</div>
-        <div class="feat-name">Image Comparison</div>
-        <p class="feat-desc">Side-by-side original vs. carrier comparison. Pixel-level diff visualization highlights exactly where data was embedded.</p>
+      <div class="feat-card reveal" style="--child-i:4">
+        <div class="feat-icon">&#127891;</div>
+        <div class="feat-name">Gamified Academy</div>
+        <p class="feat-desc">XP progression, level-ups, CTF challenges, achievement badges, and four structured learning tracks.</p>
       </div>
-      <div class="feat-card">
-        <div class="feat-icon">🔐</div>
-        <div class="feat-name">Pre-Encryption</div>
-        <p class="feat-desc">Encrypt your payload with AES-256 before embedding. The stego layer is just one line of defense.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📊</div>
-        <div class="feat-name">Histogram Analysis</div>
-        <p class="feat-desc">Color channel histograms with before/after overlay. Visual detection of distribution anomalies caused by encoding.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🎓</div>
-        <div class="feat-name">CTF Challenges</div>
-        <p class="feat-desc">Graded CTF-style challenges from beginner to expert. Real embedded images. Real extraction. Real flags.</p>
+      <div class="feat-card reveal" style="--child-i:5">
+        <div class="feat-icon">&#128202;</div>
+        <div class="feat-name">Interactive Visualizations</div>
+        <p class="feat-desc">LSB pixel grid overlay, image comparison slider, histogram overlays, and bit plane visualizations.</p>
       </div>
     </div>
-  </div>
+  </section>
 
-  <hr class="div" />
+  <hr class="gradient-divider" />
 
-  <!-- The Stack -->
-  <div class="section" id="stack">
-    <p class="s-tag">// Technology</p>
-    <h2 class="s-title">The Stack</h2>
-    <p class="s-desc">Signal processing and image forensics under the hood.</p>
+  <!-- ═══════════════════ STACK ═══════════════════ -->
+  <section class="section" id="stack">
+    <div class="reveal">
+      <p class="s-tag">// Technology</p>
+      <h2 class="s-title">THE STACK</h2>
+      <p class="s-desc">Built with precision engineering for steganography operations.</p>
+    </div>
 
-    <div class="stack-grid">
+    <div class="stack-grid reveal">
       <span class="stack-tag">Electron</span>
-      <span class="stack-tag">React</span>
-      <span class="stack-tag">Tailwind CSS</span>
+      <span class="stack-tag">React 19</span>
       <span class="stack-tag">TypeScript</span>
-      <span class="stack-tag">Sharp</span>
-      <span class="stack-tag">Canvas API</span>
-      <span class="stack-tag">Web Crypto API</span>
-      <span class="stack-tag">Node.js</span>
-      <span class="stack-tag">Vite</span>
-      <span class="stack-tag">electron-vite</span>
+      <span class="stack-tag">Tailwind CSS v4</span>
+      <span class="stack-tag">Framer Motion</span>
+      <span class="stack-tag">Zustand</span>
+      <span class="stack-tag">Node Crypto</span>
+      <span class="stack-tag">Web Audio API</span>
     </div>
 
-    <div style="margin-top:2.5rem;text-align:center;">
-      <a class="cta-btn" href="https://github.com/phantom-suite/echo">View on GitHub</a>
+    <div style="margin-top:3rem; text-align:center;" class="reveal">
+      <a class="hero-cta magnetic-btn" href="https://github.com/EmperorBadussy/ECHO" target="_blank" rel="noopener noreferrer">View on GitHub &rarr;</a>
     </div>
-  </div>
+  </section>
 
-  <!-- Footer -->
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
   <footer>
     <div class="footer-logo">ECHO</div>
-    <div class="footer-sub">Part of the PHANTOM Suite // Steganography &amp; Data Concealment</div>
-    <a class="footer-back" href="/suite/">← Back to PHANTOM Suite</a>
+    <div class="footer-sub">Part of the PHANTOM Suite &mdash; Encrypted Concealment &amp; Hidden Operations</div>
+    <div class="footer-links">
+      <a href="/suite/">&larr; Back to PHANTOM Suite</a>
+      <a href="https://github.com/EmperorBadussy/ECHO" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </div>
   </footer>
 
+  <!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+  <script>
+  (function() {
+    'use strict';
+
+    /* ── Detect reduced motion ── */
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const isMobile = window.innerWidth <= 768;
+
+    /* ══════════════════════════════════════════
+       1. HERO CANVAS CONSTELLATION
+    ══════════════════════════════════════════ */
+    const canvas = document.getElementById('hero-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let mouseX = -1000, mouseY = -1000;
+    const PARTICLE_COUNT = isMobile ? 20 : 45;
+    const CONNECTION_DIST = 180;
+    const MOUSE_RADIUS = 200;
+
+    function resizeCanvas() {
+      const hero = canvas.parentElement;
+      canvas.width = hero.offsetWidth;
+      canvas.height = hero.offsetHeight;
+    }
+
+    function createParticles() {
+      particles = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.6,
+          vy: (Math.random() - 0.5) * 0.6,
+          r: Math.random() * 2 + 1,
+          alpha: Math.random() * 0.5 + 0.3
+        });
+      }
+    }
+
+    function drawConstellation() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < CONNECTION_DIST) {
+            const alpha = (1 - dist / CONNECTION_DIST) * 0.15;
+            ctx.strokeStyle = 'rgba(255, 46, 151, ' + alpha + ')';
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+
+        // Mouse connection
+        const mdx = particles[i].x - mouseX;
+        const mdy = particles[i].y - mouseY;
+        const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+        if (mDist < MOUSE_RADIUS) {
+          const alpha = (1 - mDist / MOUSE_RADIUS) * 0.3;
+          ctx.strokeStyle = 'rgba(255, 92, 176, ' + alpha + ')';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(mouseX, mouseY);
+          ctx.stroke();
+
+          // Slight repulsion
+          const force = (MOUSE_RADIUS - mDist) / MOUSE_RADIUS * 0.5;
+          particles[i].vx += (mdx / mDist) * force;
+          particles[i].vy += (mdy / mDist) * force;
+        }
+      }
+
+      // Draw particles
+      for (const p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 46, 151, ' + p.alpha + ')';
+        ctx.fill();
+
+        // Glow
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r + 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 46, 151, ' + (p.alpha * 0.15) + ')';
+        ctx.fill();
+
+        // Update position
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Dampen velocity
+        p.vx *= 0.995;
+        p.vy *= 0.995;
+
+        // Add slight drift
+        p.vx += (Math.random() - 0.5) * 0.02;
+        p.vy += (Math.random() - 0.5) * 0.02;
+
+        // Wrap
+        if (p.x < -20) p.x = canvas.width + 20;
+        if (p.x > canvas.width + 20) p.x = -20;
+        if (p.y < -20) p.y = canvas.height + 20;
+        if (p.y > canvas.height + 20) p.y = -20;
+      }
+    }
+
+    function animateCanvas() {
+      if (!prefersReducedMotion) {
+        drawConstellation();
+      }
+      requestAnimationFrame(animateCanvas);
+    }
+
+    resizeCanvas();
+    createParticles();
+    animateCanvas();
+
+    window.addEventListener('resize', function() {
+      resizeCanvas();
+      createParticles();
+    });
+
+    canvas.addEventListener('mousemove', function(e) {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+
+    canvas.addEventListener('mouseleave', function() {
+      mouseX = -1000;
+      mouseY = -1000;
+    });
+
+    /* ══════════════════════════════════════════
+       2. CURSOR GLOW FOLLOWER (10% lerp)
+    ══════════════════════════════════════════ */
+    if (!isTouchDevice && !prefersReducedMotion) {
+      const glow = document.getElementById('cursorGlow');
+      let glowX = 0, glowY = 0;
+      let targetGlowX = 0, targetGlowY = 0;
+
+      document.addEventListener('mousemove', function(e) {
+        targetGlowX = e.clientX;
+        targetGlowY = e.clientY;
+      });
+
+      function updateGlow() {
+        glowX += (targetGlowX - glowX) * 0.1;
+        glowY += (targetGlowY - glowY) * 0.1;
+        glow.style.left = glowX + 'px';
+        glow.style.top = glowY + 'px';
+        requestAnimationFrame(updateGlow);
+      }
+      updateGlow();
+    } else {
+      const glow = document.getElementById('cursorGlow');
+      if (glow) glow.style.display = 'none';
+    }
+
+    /* ══════════════════════════════════════════
+       3. CHARACTER-BY-CHARACTER TITLE REVEAL
+    ══════════════════════════════════════════ */
+    const titleEl = document.getElementById('heroTitle');
+    const titleText = titleEl.textContent;
+    titleEl.textContent = '';
+    titleEl.setAttribute('aria-label', titleText);
+
+    for (let i = 0; i < titleText.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'char';
+      span.textContent = titleText[i];
+      span.style.animationDelay = (i * 0.05 + 0.3) + 's';
+      titleEl.appendChild(span);
+    }
+
+    /* ══════════════════════════════════════════
+       4. HERO STAT BOUNCE-IN
+    ══════════════════════════════════════════ */
+    const stats = document.querySelectorAll('.stat');
+    setTimeout(function() {
+      stats.forEach(function(stat, i) {
+        setTimeout(function() {
+          stat.classList.add('visible');
+        }, 800 + i * 150);
+      });
+    }, 0);
+
+    /* ══════════════════════════════════════════
+       5. SCROLL-TRIGGERED REVEALS (IntersectionObserver)
+    ══════════════════════════════════════════ */
+    const revealElements = document.querySelectorAll('.reveal');
+
+    if ('IntersectionObserver' in window && !prefersReducedMotion) {
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+      });
+
+      revealElements.forEach(function(el) {
+        observer.observe(el);
+      });
+    } else {
+      revealElements.forEach(function(el) {
+        el.classList.add('visible');
+      });
+    }
+
+    /* ══════════════════════════════════════════
+       6. SCROLL PROGRESS BAR
+    ══════════════════════════════════════════ */
+    const progressBar = document.getElementById('scrollProgress');
+
+    window.addEventListener('scroll', function() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      progressBar.style.width = progress + '%';
+    }, { passive: true });
+
+    /* ══════════════════════════════════════════
+       7. MAGNETIC BUTTON EFFECT
+    ══════════════════════════════════════════ */
+    if (!isTouchDevice && !prefersReducedMotion) {
+      const magneticBtns = document.querySelectorAll('.magnetic-btn');
+
+      magneticBtns.forEach(function(btn) {
+        btn.addEventListener('mousemove', function(e) {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          btn.style.transform = 'translate(' + (x * 0.15) + 'px, ' + (y * 0.15) + 'px)';
+        });
+
+        btn.addEventListener('mouseleave', function() {
+          btn.style.transform = 'translate(0, 0)';
+        });
+      });
+    }
+
+    /* ══════════════════════════════════════════
+       8. MOBILE MENU TOGGLE
+    ══════════════════════════════════════════ */
+    const mobileToggle = document.getElementById('mobileToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', function() {
+        navLinks.classList.toggle('open');
+      });
+    }
+
+    /* ══════════════════════════════════════════
+       9. SMOOTH SCROLL FOR NAV LINKS
+    ══════════════════════════════════════════ */
+    document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+          navLinks.classList.remove('open');
+        }
+      });
+    });
+
+  })();
+  </script>
 </body>
 </html>
