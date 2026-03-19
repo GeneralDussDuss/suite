@@ -369,6 +369,7 @@ nav {
   margin-bottom: 1.5rem;
   position: relative;
   z-index: 2;
+  opacity: 1 !important; /* title container always visible */
 }
 
 .hero-title .char {
@@ -382,6 +383,13 @@ nav {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-shadow: none;
+}
+
+/* Fallback: if animation doesn't fire within 3s, show chars anyway */
+@supports (animation: charReveal 1s) {
+  .hero-title .char {
+    animation-fill-mode: forwards;
+  }
 }
 
 @keyframes charReveal {
@@ -1692,6 +1700,12 @@ footer {
     span.style.animationDelay = (0.4 + i * 0.05) + 's';
     titleEl.appendChild(span);
   }
+
+  // Safety fallback — force title visible after 3s in case animation fails
+  setTimeout(function() {
+    var chars = document.querySelectorAll('.hero-title .char');
+    chars.forEach(function(c) { c.style.opacity = '1'; c.style.transform = 'none'; c.style.filter = 'none'; });
+  }, 3000);
 
   // ── 5. INTERSECTION OBSERVER — SCROLL REVEALS ──
   const revealObserver = new IntersectionObserver(function(entries) {

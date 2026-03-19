@@ -288,12 +288,20 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       filter: drop-shadow(0 0 40px rgba(129,140,248,0.35));
+      opacity: 1 !important; /* title container always visible */
     }
 
     .hero-title .char {
       display: inline-block;
       opacity: 0;
       animation: charReveal 0.6s var(--bounce) forwards;
+    }
+
+    /* Fallback: if animation doesn't fire within 3s, show chars anyway */
+    @supports (animation: charReveal 1s) {
+      .hero-title .char {
+        animation-fill-mode: forwards;
+      }
     }
 
     @keyframes charReveal {
@@ -1447,6 +1455,12 @@
       span.style.animationDelay = (0.3 + i * 0.05) + 's';
       heroTitle.appendChild(span);
     });
+
+    // Safety fallback — force title visible after 3s in case animation fails
+    setTimeout(function() {
+      var chars = document.querySelectorAll('.hero-title .char');
+      chars.forEach(function(c) { c.style.opacity = '1'; c.style.transform = 'none'; c.style.filter = 'none'; });
+    }, 3000);
 
     /* ── 6. Magnetic Button Effect ── */
     const magneticButtons = document.querySelectorAll('.magnetic-btn');

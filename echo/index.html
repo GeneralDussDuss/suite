@@ -271,6 +271,7 @@
       margin-bottom: 1.5rem;
       color: var(--pink-core);
       text-shadow: 0 0 40px rgba(255,46,151,0.5), 0 0 80px rgba(255,46,151,0.2), 0 0 140px rgba(255,46,151,0.08);
+      opacity: 1 !important; /* title container always visible */
     }
 
     .hero-title .char {
@@ -279,6 +280,13 @@
       transform: translateY(60px) rotateX(90deg);
       filter: blur(8px);
       animation: charReveal 0.8s var(--bounce) forwards;
+    }
+
+    /* Fallback: if animation doesn't fire within 3s, show chars anyway */
+    @supports (animation: charReveal 1s) {
+      .hero-title .char {
+        animation-fill-mode: forwards;
+      }
     }
 
     @keyframes charReveal {
@@ -1389,6 +1397,12 @@
       span.style.animationDelay = (i * 0.05 + 0.3) + 's';
       titleEl.appendChild(span);
     }
+
+    // Safety fallback — force title visible after 3s in case animation fails
+    setTimeout(function() {
+      var chars = document.querySelectorAll('.hero-title .char');
+      chars.forEach(function(c) { c.style.opacity = '1'; c.style.transform = 'none'; c.style.filter = 'none'; });
+    }, 3000);
 
     /* ══════════════════════════════════════════
        4. HERO STAT BOUNCE-IN
