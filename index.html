@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THE SUITE — Eleven Tools. One Ecosystem.</title>
-<meta name="description" content="AETHER. CHARON. HYDRA. FACELESS. PROMETHEUS. CERBERUS. DAEDALUS. ECHO. MEDUSA. MORPHEUS. ARGUS. Eleven tools forged in the void. One ecosystem. Zero compromise.">
-<meta property="og:title" content="THE SUITE — Eleven Tools. One Ecosystem.">
-<meta property="og:description" content="AETHER. CHARON. HYDRA. FACELESS. PROMETHEUS. CERBERUS. DAEDALUS. ECHO. MEDUSA. MORPHEUS. ARGUS. Eleven tools forged in the void. One ecosystem. Zero compromise.">
+<title>THE SUITE — Twelve Tools. One Ecosystem.</title>
+<meta name="description" content="AETHER. CHARON. HYDRA. FACELESS. PROMETHEUS. CERBERUS. DAEDALUS. ECHO. MEDUSA. MORPHEUS. ARGUS. ICARUS. Twelve tools forged in the void. One ecosystem. Zero compromise.">
+<meta property="og:title" content="THE SUITE — Twelve Tools. One Ecosystem.">
+<meta property="og:description" content="AETHER. CHARON. HYDRA. FACELESS. PROMETHEUS. CERBERUS. DAEDALUS. ECHO. MEDUSA. MORPHEUS. ARGUS. ICARUS. Twelve tools forged in the void. One ecosystem. Zero compromise.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://emperorbadussy.github.io/suite/">
 <meta name="twitter:card" content="summary">
@@ -18,7 +18,7 @@
 <style>
 /* ============================================
    THE SUITE — OLED NEON ROSE HUB
-   Eleven Tools. One Ecosystem.
+   Twelve Tools. One Ecosystem.
    ============================================ */
 
 @property --angle {
@@ -642,6 +642,28 @@ body::after {
 .project-card.argus .project-cta { color: #FFB347; border-color: #FF6B35; }
 .project-card.argus:hover .project-cta { background: rgba(255,107,53,0.2); box-shadow: 0 0 12px rgba(255,107,53,0.3); }
 
+/* ICARUS card */
+.project-card.icarus { border-color: rgba(234,179,8,0.3); }
+.project-card.icarus::before {
+  background: conic-gradient(from var(--angle), transparent 30%, #EAB308, #FDE047, transparent 70%);
+  animation: rotateBorder 3s linear infinite;
+}
+.project-card.icarus::after { background: radial-gradient(circle, rgba(234,179,8,0.08) 0%, transparent 60%); }
+.project-card.icarus:hover {
+  border-color: #EAB308;
+  box-shadow: 0 0 30px rgba(234,179,8,0.4), 0 0 80px rgba(234,179,8,0.2), 0 25px 80px rgba(0,0,0,0.6), inset 0 0 30px rgba(234,179,8,0.1);
+}
+.project-card.icarus .project-icon { background: rgba(234,179,8,0.15); border-color: rgba(234,179,8,0.3); }
+.project-card.icarus:hover .project-icon { box-shadow: 0 0 25px rgba(234,179,8,0.5); border-color: #EAB308; transform: scale(1.1); }
+.project-card.icarus .project-icon svg { stroke: #FDE047; }
+.project-card.icarus .project-name { color: #FDE047; text-shadow: 0 0 8px rgba(234,179,8,0.5); }
+.project-card.icarus:hover .project-name { text-shadow: 0 0 12px rgba(234,179,8,0.8), 0 0 30px rgba(234,179,8,0.3); }
+.project-card.icarus .project-tagline { color: #FDE047; }
+.project-card.icarus .project-tech span { color: rgba(253,224,71,0.7); border-color: rgba(234,179,8,0.2); }
+.project-card.icarus:hover .project-tech span { color: rgba(253,224,71,1); border-color: rgba(234,179,8,0.5); background: rgba(234,179,8,0.1); }
+.project-card.icarus .project-cta { color: #FDE047; border-color: #EAB308; }
+.project-card.icarus:hover .project-cta { background: rgba(234,179,8,0.2); box-shadow: 0 0 12px rgba(234,179,8,0.3); }
+
 .scroll-indicator {
   position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
   z-index: 2; animation: scroll-bounce 2s infinite;
@@ -782,6 +804,12 @@ body::after {
   box-shadow: 0 0 15px rgba(255,107,53,0.1);
 }
 .flow-node.argus:hover { box-shadow: 0 0 25px rgba(255,107,53,0.35); }
+.flow-node.icarus {
+  border-color: #EAB308; color: #FDE047;
+  background: rgba(234,179,8,0.08);
+  box-shadow: 0 0 15px rgba(234,179,8,0.1);
+}
+.flow-node.icarus:hover { box-shadow: 0 0 25px rgba(234,179,8,0.35); }
 
 /* Cluster layout */
 .cluster { margin-top: 2.5rem; }
@@ -1315,11 +1343,11 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
   <div class="hero-content">
     <div class="hero-badge">
       <span class="dot"></span>
-      AETHER &bull; CHARON &bull; HYDRA &bull; FACELESS &bull; PROMETHEUS &bull; CERBERUS &bull; DAEDALUS &bull; ECHO &bull; MEDUSA &bull; MORPHEUS &bull; ARGUS
+      AETHER &bull; CHARON &bull; HYDRA &bull; FACELESS &bull; PROMETHEUS &bull; CERBERUS &bull; DAEDALUS &bull; ECHO &bull; MEDUSA &bull; MORPHEUS &bull; ARGUS &bull; ICARUS
     </div>
     <h1 class="hero-title" id="heroTitle"></h1>
-    <p class="hero-tagline">Eleven tools. One ecosystem. Zero compromise.</p>
-    <p class="hero-sub">Eleven purpose-built applications spanning music, security, and media. Each one forged in OLED darkness, powered by bleeding-edge tech. Together, they are unstoppable.</p>
+    <p class="hero-tagline">Twelve tools. One ecosystem. Zero compromise.</p>
+    <p class="hero-sub">Twelve purpose-built applications spanning music, security, and media. Each one forged in OLED darkness, powered by bleeding-edge tech. Together, they are unstoppable.</p>
 
     <div class="projects-grid">
       <!-- AETHER -->
@@ -1519,6 +1547,24 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
         </div>
         <div class="project-cta">EXPLORE ARGUS</div>
       </a>
+
+      <!-- ICARUS -->
+      <a href="https://emperorbadussy.github.io/suite/icarus/" class="project-card icarus">
+        <canvas class="card-canvas" data-type="icarus"></canvas>
+        <div class="project-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L9 12l-7 4 7 4 3 10 3-10 7-4-7-4z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div class="project-name">ICARUS</div>
+        <div class="project-tagline">The Winged One</div>
+        <div class="project-desc">USB payload builder &amp; DuckyScript library. 65+ payloads, visual editor, deployment simulator, encoder. Fly too close to the sun.</div>
+        <div class="project-tech">
+          <span>Electron</span>
+          <span>React</span>
+          <span>65+ Scripts</span>
+          <span>Academy</span>
+        </div>
+        <div class="project-cta">EXPLORE ICARUS</div>
+      </a>
     </div>
   </div>
   <div class="scroll-indicator">
@@ -1534,7 +1580,7 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
   <div class="section-inner" style="text-align:center;">
     <div class="section-label reveal" style="justify-content:center;">01 // THE ECOSYSTEM</div>
     <h2 class="section-title reveal" style="margin-left:auto;margin-right:auto;">How They Connect</h2>
-    <p class="section-desc reveal" style="margin-left:auto;margin-right:auto;">Eleven tools across three domains. The music pipeline flows from source to speakers. The security arsenal handles offensive research and defense. Each tool is purpose-built, but together they form a unified ecosystem.</p>
+    <p class="section-desc reveal" style="margin-left:auto;margin-right:auto;">Twelve tools across three domains. The music pipeline flows from source to speakers. The security arsenal handles offensive research and defense. Each tool is purpose-built, but together they form a unified ecosystem.</p>
 
     <!-- CLUSTER 1: MUSIC PIPELINE -->
     <div class="cluster reveal">
@@ -1601,8 +1647,12 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
           ECHO
           <div class="flow-sub">Steganography</div>
         </div>
+        <div class="flow-node icarus">
+          ICARUS
+          <div class="flow-sub">USB payloads</div>
+        </div>
       </div>
-      <div class="cluster-desc">Six offensive security tools. Recon, exploitation, analysis, evasion, social engineering, and concealment. Each one a specialist.</div>
+      <div class="cluster-desc">Seven offensive security tools. Recon, exploitation, analysis, evasion, social engineering, concealment, and keystroke injection. Each one a specialist.</div>
     </div>
 
     <!-- CLUSTER 3: STANDALONE -->
@@ -1639,7 +1689,7 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
 
     <div class="brand-grid reveal" id="brandGrid">
       <div class="brand-stat">
-        <div class="brand-stat-value" data-count="11">0</div>
+        <div class="brand-stat-value" data-count="12">0</div>
         <div class="brand-stat-label">PROJECTS</div>
       </div>
       <div class="brand-stat">
