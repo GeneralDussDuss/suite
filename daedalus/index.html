@@ -113,8 +113,8 @@ body {
 /* ============ CURSOR GLOW ============ */
 .cursor-glow {
   position: fixed;
-  width: 500px;
-  height: 500px;
+  width: 300px;
+  height: 300px;
   border-radius: 50%;
   pointer-events: none;
   z-index: 1;
@@ -374,10 +374,8 @@ nav {
 
 .hero-title .char {
   display: inline-block;
-  opacity: 0;
-  transform: translateY(40px) rotateX(40deg);
-  filter: blur(8px);
-  animation: charReveal 0.6s forwards;
+  opacity: 1;
+  animation: charReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   background: linear-gradient(135deg, var(--purple-core), var(--purple-vivid));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -385,17 +383,15 @@ nav {
   text-shadow: none;
 }
 
-/* Fallback: if animation doesn't fire within 3s, show chars anyway */
-@supports (animation: charReveal 1s) {
-  .hero-title .char {
-    animation-fill-mode: forwards;
-  }
-}
-
 @keyframes charReveal {
+  from {
+    opacity: 0;
+    transform: translateY(40px) rotateX(90deg);
+    filter: blur(10px);
+  }
   to {
     opacity: 1;
-    transform: translateY(0) rotateX(0);
+    transform: none;
     filter: blur(0);
   }
 }
@@ -1590,10 +1586,13 @@ footer {
       if (p.y > canvas.height) p.y = 0;
 
       // Draw
+      var breathe = 0.5 + 0.5 * Math.sin(Date.now() * 0.001 + p.x * 0.01);
+      ctx.globalAlpha = p.alpha * breathe;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(183, 110, 255, ' + p.alpha + ')';
       ctx.fill();
+      ctx.globalAlpha = 1;
 
       // Glow
       ctx.beginPath();
@@ -1689,6 +1688,18 @@ footer {
     progressBar.style.width = progress + '%';
   }, { passive: true });
 
+  // ── Parallax on Section Titles ──
+  window.addEventListener('scroll', function() {
+    var titles = document.querySelectorAll('.section-title, .section-heading, h2');
+    titles.forEach(function(title) {
+      var rect = title.getBoundingClientRect();
+      var viewCenter = window.innerHeight / 2;
+      var elemCenter = rect.top + rect.height / 2;
+      var offset = (elemCenter - viewCenter) * 0.03;
+      title.style.transform = 'translateY(' + offset + 'px)';
+    });
+  }, { passive: true });
+
   // ── 4. CHARACTER-BY-CHARACTER TITLE REVEAL ──
   const titleEl = document.getElementById('heroTitle');
   const titleText = titleEl.textContent;
@@ -1717,7 +1728,7 @@ footer {
         if (entry.target.classList.contains('stagger-children')) {
           const children = entry.target.querySelectorAll('.reveal-child');
           children.forEach(function(child, idx) {
-            child.style.transitionDelay = (idx * 0.03) + 's';
+            child.style.transitionDelay = (idx * 0.08) + 's';
           });
         }
 
@@ -1731,7 +1742,7 @@ footer {
   });
 
   // ── 6. 3D PERSPECTIVE CARD HOVER ──
-  document.querySelectorAll('.card-3d').forEach(function(card) {
+  document.querySelectorAll('.card-3d, .module-card, .cap-card, .track-card, .feat-card, .timeline-card, .arsenal-card, .stat-card, .tech-badge, .academy-card, .stack-tag').forEach(function(card) {
     card.addEventListener('mousemove', function(e) {
       if (prefersReducedMotion) return;
       const rect = card.getBoundingClientRect();

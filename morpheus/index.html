@@ -86,8 +86,8 @@
     /* ── Cursor Glow Trail ── */
     #cursor-glow {
       position: fixed;
-      width: 400px;
-      height: 400px;
+      width: 300px;
+      height: 300px;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(129,140,248,0.08) 0%, rgba(129,140,248,0.03) 30%, transparent 70%);
       pointer-events: none;
@@ -295,22 +295,15 @@
 
     .hero-title .char {
       display: inline-block;
-      opacity: 0;
-      animation: charReveal 0.6s var(--bounce) forwards;
-    }
-
-    /* Fallback: if animation doesn't fire within 3s, show chars anyway */
-    @supports (animation: charReveal 1s) {
-      .hero-title .char {
-        animation-fill-mode: forwards;
-      }
+      opacity: 1;
+      animation: charReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
     @keyframes charReveal {
       from {
         opacity: 0;
-        transform: translateY(30px) rotateX(-90deg);
-        filter: blur(4px);
+        transform: translateY(40px) rotateX(90deg);
+        filter: blur(10px);
       }
       to {
         opacity: 1;
@@ -1335,10 +1328,13 @@
         p.vy *= 0.999;
 
         // Draw particle
+        var breathe = 0.5 + 0.5 * Math.sin(Date.now() * 0.001 + p.x * 0.01);
+        ctx.globalAlpha = p.alpha * breathe;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(129, 140, 248, ' + p.alpha + ')';
         ctx.fill();
+        ctx.globalAlpha = 1;
 
         // Lines to nearby particles
         for (let j = i + 1; j < particles.length; j++) {
@@ -1424,6 +1420,18 @@
 
     window.addEventListener('scroll', updateProgress, { passive: true });
 
+    /* ── Parallax on Section Titles ── */
+    window.addEventListener('scroll', function() {
+      var titles = document.querySelectorAll('.section-title, .section-heading, h2');
+      titles.forEach(function(title) {
+        var rect = title.getBoundingClientRect();
+        var viewCenter = window.innerHeight / 2;
+        var elemCenter = rect.top + rect.height / 2;
+        var offset = (elemCenter - viewCenter) * 0.03;
+        title.style.transform = 'translateY(' + offset + 'px)';
+      });
+    }, { passive: true });
+
     /* ── 4. IntersectionObserver for Scroll Reveals ── */
     const revealElements = document.querySelectorAll('.reveal');
 
@@ -1435,7 +1443,7 @@
           if (parent) {
             const siblings = Array.from(parent.querySelectorAll(':scope > .reveal'));
             const index = siblings.indexOf(entry.target);
-            entry.target.style.transitionDelay = (index * 0.03) + 's';
+            entry.target.style.transitionDelay = (index * 0.08) + 's';
           }
           entry.target.classList.add('revealed');
           observer.unobserve(entry.target);
@@ -1488,7 +1496,7 @@
 
     /* ── 7. 3D Card Hover ── */
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    document.querySelectorAll('.module-card, .academy-card, .capability-card').forEach(function(card) {
+    document.querySelectorAll('.module-card, .cap-card, .track-card, .feat-card, .timeline-card, .arsenal-card, .stat-card, .tech-badge, .capability-card, .academy-card, .stack-badge').forEach(function(card) {
       card.addEventListener('mousemove', function(e) {
         if (prefersReducedMotion) return;
         const rect = card.getBoundingClientRect();

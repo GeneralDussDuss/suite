@@ -78,8 +78,8 @@
     /* ── Cursor Glow ── */
     .cursor-glow {
       position: fixed;
-      width: 420px;
-      height: 420px;
+      width: 300px;
+      height: 300px;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(255,46,151,0.08) 0%, rgba(255,46,151,0.03) 40%, transparent 70%);
       pointer-events: none;
@@ -276,23 +276,19 @@
 
     .hero-title .char {
       display: inline-block;
-      opacity: 0;
-      transform: translateY(60px) rotateX(90deg);
-      filter: blur(8px);
-      animation: charReveal 0.8s var(--bounce) forwards;
-    }
-
-    /* Fallback: if animation doesn't fire within 3s, show chars anyway */
-    @supports (animation: charReveal 1s) {
-      .hero-title .char {
-        animation-fill-mode: forwards;
-      }
+      opacity: 1;
+      animation: charReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
     @keyframes charReveal {
+      from {
+        opacity: 0;
+        transform: translateY(40px) rotateX(90deg);
+        filter: blur(10px);
+      }
       to {
         opacity: 1;
-        transform: translateY(0) rotateX(0deg);
+        transform: none;
         filter: blur(0);
       }
     }
@@ -1298,10 +1294,13 @@
 
       // Draw particles
       for (const p of particles) {
+        var breathe = 0.5 + 0.5 * Math.sin(Date.now() * 0.001 + p.x * 0.01);
+        ctx.globalAlpha = p.alpha * breathe;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(255, 46, 151, ' + p.alpha + ')';
         ctx.fill();
+        ctx.globalAlpha = 1;
 
         // Glow
         ctx.beginPath();
@@ -1456,6 +1455,20 @@
     }, { passive: true });
 
     /* ══════════════════════════════════════════
+       6b. PARALLAX ON SECTION TITLES
+    ══════════════════════════════════════════ */
+    window.addEventListener('scroll', function() {
+      var titles = document.querySelectorAll('.s-title, .section-title, .section-heading, h2');
+      titles.forEach(function(title) {
+        var rect = title.getBoundingClientRect();
+        var viewCenter = window.innerHeight / 2;
+        var elemCenter = rect.top + rect.height / 2;
+        var offset = (elemCenter - viewCenter) * 0.03;
+        title.style.transform = 'translateY(' + offset + 'px)';
+      });
+    }, { passive: true });
+
+    /* ══════════════════════════════════════════
        7. MAGNETIC BUTTON EFFECT
     ══════════════════════════════════════════ */
     if (!isTouchDevice && !prefersReducedMotion) {
@@ -1478,7 +1491,7 @@
     /* ══════════════════════════════════════════
        8. 3D CARD HOVER
     ══════════════════════════════════════════ */
-    document.querySelectorAll('.module-card, .feat-card').forEach(function(card) {
+    document.querySelectorAll('.module-card, .cap-card, .track-card, .feat-card, .timeline-card, .arsenal-card, .stat-card, .tech-badge, .capability-card, .stack-tag').forEach(function(card) {
       card.addEventListener('mousemove', function(e) {
         if (prefersReducedMotion) return;
         var rect = card.getBoundingClientRect();
