@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THE SUITE — Eight Tools. One Ecosystem.</title>
-<meta name="description" content="AETHER. CHARON. HYDRA. FACELESS. PROMETHEUS. CERBERUS. DAEDALUS. ECHO. Eight tools forged in the void. One ecosystem. Zero compromise.">
-<meta property="og:title" content="THE SUITE — Eight Tools. One Ecosystem.">
-<meta property="og:description" content="AETHER. CHARON. HYDRA. FACELESS. PROMETHEUS. CERBERUS. DAEDALUS. ECHO. Eight tools forged in the void. One ecosystem. Zero compromise.">
+<title>THE SUITE — Eleven Tools. One Ecosystem.</title>
+<meta name="description" content="AETHER. CHARON. HYDRA. FACELESS. PROMETHEUS. CERBERUS. DAEDALUS. ECHO. MEDUSA. MORPHEUS. ARGUS. Eleven tools forged in the void. One ecosystem. Zero compromise.">
+<meta property="og:title" content="THE SUITE — Eleven Tools. One Ecosystem.">
+<meta property="og:description" content="AETHER. CHARON. HYDRA. FACELESS. PROMETHEUS. CERBERUS. DAEDALUS. ECHO. MEDUSA. MORPHEUS. ARGUS. Eleven tools forged in the void. One ecosystem. Zero compromise.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://emperorbadussy.github.io/suite/">
 <meta name="twitter:card" content="summary">
@@ -18,7 +18,7 @@
 <style>
 /* ============================================
    THE SUITE — OLED NEON ROSE HUB
-   Eight Tools. One Ecosystem.
+   Eleven Tools. One Ecosystem.
    ============================================ */
 
 @property --angle {
@@ -576,6 +576,72 @@ body::after {
 .project-card.echo .project-cta { color: #FF2E97; border-color: #FF2E97; }
 .project-card.echo:hover .project-cta { background: rgba(255,46,151,0.2); box-shadow: 0 0 12px rgba(255,46,151,0.3); }
 
+/* MEDUSA card */
+.project-card.medusa { border-color: rgba(57,255,20,0.3); }
+.project-card.medusa::before {
+  background: conic-gradient(from var(--angle), transparent 30%, #39FF14, #7CFC00, transparent 70%);
+  animation: rotateBorder 3s linear infinite;
+}
+.project-card.medusa::after { background: radial-gradient(circle, rgba(57,255,20,0.08) 0%, transparent 60%); }
+.project-card.medusa:hover {
+  border-color: #39FF14;
+  box-shadow: 0 0 30px rgba(57,255,20,0.4), 0 0 80px rgba(57,255,20,0.2), 0 25px 80px rgba(0,0,0,0.6), inset 0 0 30px rgba(57,255,20,0.1);
+}
+.project-card.medusa .project-icon { background: rgba(57,255,20,0.15); border-color: rgba(57,255,20,0.3); }
+.project-card.medusa:hover .project-icon { box-shadow: 0 0 25px rgba(57,255,20,0.5); border-color: #39FF14; transform: scale(1.1); }
+.project-card.medusa .project-icon svg { stroke: #7CFC00; }
+.project-card.medusa .project-name { color: #7CFC00; text-shadow: 0 0 8px rgba(57,255,20,0.5); }
+.project-card.medusa:hover .project-name { text-shadow: 0 0 12px rgba(57,255,20,0.8), 0 0 30px rgba(57,255,20,0.3); }
+.project-card.medusa .project-tagline { color: #7CFC00; }
+.project-card.medusa .project-tech span { color: rgba(124,252,0,0.7); border-color: rgba(57,255,20,0.2); }
+.project-card.medusa:hover .project-tech span { color: rgba(124,252,0,1); border-color: rgba(57,255,20,0.5); background: rgba(57,255,20,0.1); }
+.project-card.medusa .project-cta { color: #7CFC00; border-color: #39FF14; }
+.project-card.medusa:hover .project-cta { background: rgba(57,255,20,0.2); box-shadow: 0 0 12px rgba(57,255,20,0.3); }
+
+/* MORPHEUS card */
+.project-card.morpheus { border-color: rgba(129,140,248,0.3); }
+.project-card.morpheus::before {
+  background: conic-gradient(from var(--angle), transparent 30%, #818CF8, #A5B4FC, transparent 70%);
+  animation: rotateBorder 3s linear infinite;
+}
+.project-card.morpheus::after { background: radial-gradient(circle, rgba(129,140,248,0.08) 0%, transparent 60%); }
+.project-card.morpheus:hover {
+  border-color: #818CF8;
+  box-shadow: 0 0 30px rgba(129,140,248,0.4), 0 0 80px rgba(129,140,248,0.2), 0 25px 80px rgba(0,0,0,0.6), inset 0 0 30px rgba(129,140,248,0.1);
+}
+.project-card.morpheus .project-icon { background: rgba(129,140,248,0.15); border-color: rgba(129,140,248,0.3); }
+.project-card.morpheus:hover .project-icon { box-shadow: 0 0 25px rgba(129,140,248,0.5); border-color: #818CF8; transform: scale(1.1); }
+.project-card.morpheus .project-icon svg { stroke: #A5B4FC; }
+.project-card.morpheus .project-name { color: #A5B4FC; text-shadow: 0 0 8px rgba(129,140,248,0.5); }
+.project-card.morpheus:hover .project-name { text-shadow: 0 0 12px rgba(129,140,248,0.8), 0 0 30px rgba(129,140,248,0.3); }
+.project-card.morpheus .project-tagline { color: #A5B4FC; }
+.project-card.morpheus .project-tech span { color: rgba(165,180,252,0.7); border-color: rgba(129,140,248,0.2); }
+.project-card.morpheus:hover .project-tech span { color: rgba(165,180,252,1); border-color: rgba(129,140,248,0.5); background: rgba(129,140,248,0.1); }
+.project-card.morpheus .project-cta { color: #A5B4FC; border-color: #818CF8; }
+.project-card.morpheus:hover .project-cta { background: rgba(129,140,248,0.2); box-shadow: 0 0 12px rgba(129,140,248,0.3); }
+
+/* ARGUS card */
+.project-card.argus { border-color: rgba(255,107,53,0.3); }
+.project-card.argus::before {
+  background: conic-gradient(from var(--angle), transparent 30%, #FF6B35, #FFB347, transparent 70%);
+  animation: rotateBorder 3s linear infinite;
+}
+.project-card.argus::after { background: radial-gradient(circle, rgba(255,107,53,0.08) 0%, transparent 60%); }
+.project-card.argus:hover {
+  border-color: #FF6B35;
+  box-shadow: 0 0 30px rgba(255,107,53,0.4), 0 0 80px rgba(255,107,53,0.2), 0 25px 80px rgba(0,0,0,0.6), inset 0 0 30px rgba(255,107,53,0.1);
+}
+.project-card.argus .project-icon { background: rgba(255,107,53,0.15); border-color: rgba(255,107,53,0.3); }
+.project-card.argus:hover .project-icon { box-shadow: 0 0 25px rgba(255,107,53,0.5); border-color: #FF6B35; transform: scale(1.1); }
+.project-card.argus .project-icon svg { stroke: #FFB347; }
+.project-card.argus .project-name { color: #FFB347; text-shadow: 0 0 8px rgba(255,107,53,0.5); }
+.project-card.argus:hover .project-name { text-shadow: 0 0 12px rgba(255,107,53,0.8), 0 0 30px rgba(255,107,53,0.3); }
+.project-card.argus .project-tagline { color: #FFB347; }
+.project-card.argus .project-tech span { color: rgba(255,179,71,0.7); border-color: rgba(255,107,53,0.2); }
+.project-card.argus:hover .project-tech span { color: rgba(255,179,71,1); border-color: rgba(255,107,53,0.5); background: rgba(255,107,53,0.1); }
+.project-card.argus .project-cta { color: #FFB347; border-color: #FF6B35; }
+.project-card.argus:hover .project-cta { background: rgba(255,107,53,0.2); box-shadow: 0 0 12px rgba(255,107,53,0.3); }
+
 .scroll-indicator {
   position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
   z-index: 2; animation: scroll-bounce 2s infinite;
@@ -680,6 +746,58 @@ body::after {
   box-shadow: 0 0 15px rgba(239,68,68,0.1);
 }
 .flow-node.prometheus:hover { box-shadow: 0 0 25px rgba(239,68,68,0.35); }
+.flow-node.cerberus {
+  border-color: #F59E0B; color: #FBBF24;
+  background: rgba(245,158,11,0.08);
+  box-shadow: 0 0 15px rgba(245,158,11,0.1);
+}
+.flow-node.cerberus:hover { box-shadow: 0 0 25px rgba(245,158,11,0.35); }
+.flow-node.daedalus {
+  border-color: #B026FF; color: #B76EFF;
+  background: rgba(176,38,255,0.08);
+  box-shadow: 0 0 15px rgba(176,38,255,0.1);
+}
+.flow-node.daedalus:hover { box-shadow: 0 0 25px rgba(176,38,255,0.35); }
+.flow-node.echo {
+  border-color: #FF2E97; color: #FF85C8;
+  background: rgba(255,46,151,0.08);
+  box-shadow: 0 0 15px rgba(255,46,151,0.1);
+}
+.flow-node.echo:hover { box-shadow: 0 0 25px rgba(255,46,151,0.35); }
+.flow-node.medusa {
+  border-color: #39FF14; color: #7CFC00;
+  background: rgba(57,255,20,0.08);
+  box-shadow: 0 0 15px rgba(57,255,20,0.1);
+}
+.flow-node.medusa:hover { box-shadow: 0 0 25px rgba(57,255,20,0.35); }
+.flow-node.morpheus {
+  border-color: #818CF8; color: #A5B4FC;
+  background: rgba(129,140,248,0.08);
+  box-shadow: 0 0 15px rgba(129,140,248,0.1);
+}
+.flow-node.morpheus:hover { box-shadow: 0 0 25px rgba(129,140,248,0.35); }
+.flow-node.argus {
+  border-color: #FF6B35; color: #FFB347;
+  background: rgba(255,107,53,0.08);
+  box-shadow: 0 0 15px rgba(255,107,53,0.1);
+}
+.flow-node.argus:hover { box-shadow: 0 0 25px rgba(255,107,53,0.35); }
+
+/* Cluster layout */
+.cluster { margin-top: 2.5rem; }
+.cluster-label {
+  font-family: var(--font-display); font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--rose-vivid);
+  margin-bottom: 1rem; opacity: 0.7;
+}
+.cluster-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.5rem; flex-wrap: wrap;
+}
+.cluster-desc {
+  font-family: var(--font-body); font-size: 0.8rem; color: rgba(255,255,255,0.4);
+  margin-top: 0.6rem; max-width: 600px; margin-left: auto; margin-right: auto;
+}
 
 /* Animated SVG arrows */
 .flow-arrow-svg {
@@ -1197,11 +1315,11 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
   <div class="hero-content">
     <div class="hero-badge">
       <span class="dot"></span>
-      AETHER &bull; CHARON &bull; HYDRA &bull; FACELESS &bull; PROMETHEUS &bull; CERBERUS &bull; DAEDALUS &bull; ECHO
+      AETHER &bull; CHARON &bull; HYDRA &bull; FACELESS &bull; PROMETHEUS &bull; CERBERUS &bull; DAEDALUS &bull; ECHO &bull; MEDUSA &bull; MORPHEUS &bull; ARGUS
     </div>
     <h1 class="hero-title" id="heroTitle"></h1>
-    <p class="hero-tagline">Eight tools. One ecosystem. Zero compromise.</p>
-    <p class="hero-sub">A suite of purpose-built applications. Each one forged in OLED darkness, powered by bleeding-edge tech. Together, they are unstoppable.</p>
+    <p class="hero-tagline">Eleven tools. One ecosystem. Zero compromise.</p>
+    <p class="hero-sub">Eleven purpose-built applications spanning music, security, and media. Each one forged in OLED darkness, powered by bleeding-edge tech. Together, they are unstoppable.</p>
 
     <div class="projects-grid">
       <!-- AETHER -->
@@ -1347,6 +1465,60 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
         </div>
         <div class="project-cta">EXPLORE ECHO</div>
       </a>
+
+      <!-- MEDUSA -->
+      <a href="https://emperorbadussy.github.io/suite/medusa/" class="project-card medusa">
+        <canvas class="card-canvas" data-type="medusa"></canvas>
+        <div class="project-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3.5 3 4.5V14h4v-2.5c2-1 3-2.5 3-4.5a5 5 0 0 0-5-5z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 14v4a3 3 0 0 0 6 0v-4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 7c-1-2 0-4 2-5M20 7c1-2 0-4-2-5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div class="project-name">MEDUSA</div>
+        <div class="project-tagline">The Petrifier</div>
+        <div class="project-desc">Exploit development workbench. Shellcode workshop, buffer overflow visualizer, ROP chain builder, format string calculator. Gamified Academy.</div>
+        <div class="project-tech">
+          <span>Electron</span>
+          <span>React</span>
+          <span>50+ Gadgets</span>
+          <span>Academy</span>
+        </div>
+        <div class="project-cta">EXPLORE MEDUSA</div>
+      </a>
+
+      <!-- MORPHEUS -->
+      <a href="https://emperorbadussy.github.io/suite/morpheus/" class="project-card morpheus">
+        <canvas class="card-canvas" data-type="morpheus"></canvas>
+        <div class="project-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div class="project-name">MORPHEUS</div>
+        <div class="project-tagline">The Dreamwalker</div>
+        <div class="project-desc">Malware analysis sandbox. Behavioral analysis, network traffic visualization, YARA rules, IOC extraction. Enter the dream, dissect the nightmare.</div>
+        <div class="project-tech">
+          <span>Electron</span>
+          <span>React</span>
+          <span>YARA</span>
+          <span>Academy</span>
+        </div>
+        <div class="project-cta">EXPLORE MORPHEUS</div>
+      </a>
+
+      <!-- ARGUS -->
+      <a href="https://emperorbadussy.github.io/suite/argus/" class="project-card argus">
+        <canvas class="card-canvas" data-type="argus"></canvas>
+        <div class="project-icon">
+          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div class="project-name">ARGUS</div>
+        <div class="project-tagline">The All-Seeing</div>
+        <div class="project-desc">Social engineering platform. Phishing builder, email analysis, pretexting workshop, OSINT profiling, influence detection. A hundred eyes see all.</div>
+        <div class="project-tech">
+          <span>Electron</span>
+          <span>React</span>
+          <span>OSINT</span>
+          <span>Academy</span>
+        </div>
+        <div class="project-cta">EXPLORE ARGUS</div>
+      </a>
     </div>
   </div>
   <div class="scroll-indicator">
@@ -1362,58 +1534,95 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
   <div class="section-inner" style="text-align:center;">
     <div class="section-label reveal" style="justify-content:center;">01 // THE ECOSYSTEM</div>
     <h2 class="section-title reveal" style="margin-left:auto;margin-right:auto;">How They Connect</h2>
-    <p class="section-desc reveal" style="margin-left:auto;margin-right:auto;">The music pipeline flows from source to speakers. CHARON harvests. Navidrome stores. AETHER plays. HYDRA and PROMETHEUS stand alone &mdash; wildcards with their own domains.</p>
+    <p class="section-desc reveal" style="margin-left:auto;margin-right:auto;">Eleven tools across three domains. The music pipeline flows from source to speakers. The security arsenal handles offensive research and defense. Each tool is purpose-built, but together they form a unified ecosystem.</p>
 
-    <div class="flow-diagram-wrapper reveal">
-      <canvas id="flowCanvas"></canvas>
-      <div class="flow-diagram">
-        <div class="flow-node charon">
-          CHARON
-          <div class="flow-sub">Rips from Tidal</div>
-        </div>
-        <svg class="flow-arrow-svg" viewBox="0 0 60 24">
-          <line x1="5" y1="12" x2="48" y2="12"/>
-          <polygon points="48,8 56,12 48,16"/>
-          <circle class="flow-arrow-dot" r="2.5" cy="12">
-            <animate attributeName="cx" from="5" to="48" dur="2s" repeatCount="indefinite"/>
-          </circle>
-        </svg>
-        <div class="flow-node navidrome">
-          NAVIDROME
-          <div class="flow-sub">Auto-scans library</div>
-        </div>
-        <svg class="flow-arrow-svg" viewBox="0 0 60 24">
-          <line x1="5" y1="12" x2="48" y2="12"/>
-          <polygon points="48,8 56,12 48,16"/>
-          <circle class="flow-arrow-dot" r="2.5" cy="12">
-            <animate attributeName="cx" from="5" to="48" dur="2s" begin="0.5s" repeatCount="indefinite"/>
-          </circle>
-        </svg>
-        <div class="flow-node aether">
-          AETHER
-          <div class="flow-sub">Plays with visualizers</div>
+    <!-- CLUSTER 1: MUSIC PIPELINE -->
+    <div class="cluster reveal">
+      <div class="cluster-label">MUSIC PIPELINE</div>
+      <div class="flow-diagram-wrapper">
+        <canvas id="flowCanvas"></canvas>
+        <div class="flow-diagram">
+          <div class="flow-node charon">
+            CHARON
+            <div class="flow-sub">Rips from Tidal</div>
+          </div>
+          <svg class="flow-arrow-svg" viewBox="0 0 60 24">
+            <line x1="5" y1="12" x2="48" y2="12"/>
+            <polygon points="48,8 56,12 48,16"/>
+            <circle class="flow-arrow-dot" r="2.5" cy="12">
+              <animate attributeName="cx" from="5" to="48" dur="2s" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+          <div class="flow-node navidrome">
+            NAVIDROME
+            <div class="flow-sub">Auto-scans library</div>
+          </div>
+          <svg class="flow-arrow-svg" viewBox="0 0 60 24">
+            <line x1="5" y1="12" x2="48" y2="12"/>
+            <polygon points="48,8 56,12 48,16"/>
+            <circle class="flow-arrow-dot" r="2.5" cy="12">
+              <animate attributeName="cx" from="5" to="48" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+          <div class="flow-node aether">
+            AETHER
+            <div class="flow-sub">Plays with visualizers</div>
+          </div>
         </div>
       </div>
+      <div class="cluster-desc">CHARON harvests. Navidrome organizes. AETHER plays. Lossless from source to speakers.</div>
     </div>
 
-    <div class="wildcard-section green-wildcard reveal">
-      <div class="wildcard-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2C12 2 8 6 8 10c0 2 1 3 2 4l-3 3c-1 1-1 2 0 3s2 1 3 0l3-3 3 3c1 1 2 1 3 0s1-2 0-3l-3-3c1-1 2-2 2-4 0-4-4-8-4-8z"/></svg>
+    <!-- CLUSTER 2: SECURITY ARSENAL -->
+    <div class="cluster reveal">
+      <div class="cluster-label">SECURITY ARSENAL</div>
+      <div class="cluster-row">
+        <div class="flow-node cerberus">
+          CERBERUS
+          <div class="flow-sub">Bug bounty automation</div>
+        </div>
+        <div class="flow-node medusa">
+          MEDUSA
+          <div class="flow-sub">Exploit development</div>
+        </div>
+        <div class="flow-node morpheus">
+          MORPHEUS
+          <div class="flow-sub">Malware analysis</div>
+        </div>
+        <div class="flow-node argus">
+          ARGUS
+          <div class="flow-sub">Social engineering</div>
+        </div>
+        <div class="flow-node daedalus">
+          DAEDALUS
+          <div class="flow-sub">Payload building</div>
+        </div>
+        <div class="flow-node echo">
+          ECHO
+          <div class="flow-sub">Steganography</div>
+        </div>
       </div>
-      <div class="wildcard-text" style="text-align:left;">
-        <div class="wildcard-title">HYDRA &mdash; THE WILDCARD</div>
-        <div class="wildcard-desc">Not part of the music pipeline. HYDRA is a self-healing streaming video ripper with hot-swappable service modules. Cut off one head, two more grow back. Different domain, same relentless engineering.</div>
-      </div>
+      <div class="cluster-desc">Six offensive security tools. Recon, exploitation, analysis, evasion, social engineering, and concealment. Each one a specialist.</div>
     </div>
 
-    <div class="wildcard-section red-wildcard reveal">
-      <div class="wildcard-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg>
+    <!-- CLUSTER 3: STANDALONE -->
+    <div class="cluster reveal">
+      <div class="cluster-label">STANDALONE</div>
+      <div class="cluster-row">
+        <div class="flow-node hydra">
+          HYDRA
+          <div class="flow-sub">Video ripper</div>
+        </div>
+        <div class="flow-node faceless">
+          FACELESS
+          <div class="flow-sub">Face swap engine</div>
+        </div>
+        <div class="flow-node prometheus">
+          PROMETHEUS
+          <div class="flow-sub">OSINT platform</div>
+        </div>
       </div>
-      <div class="wildcard-text" style="text-align:left;">
-        <div class="wildcard-title">PROMETHEUS &mdash; THE ORACLE</div>
-        <div class="wildcard-desc">The intelligence-gathering arm of the suite. PROMETHEUS is an OSINT &amp; Threat Intelligence platform that scans IPs, domains, and file hashes across 7+ free intel sources. The all-seeing eye that watches the digital frontier.</div>
-      </div>
+      <div class="cluster-desc">Independent operators. Different domains, same relentless engineering.</div>
     </div>
   </div>
 </section>
@@ -1430,7 +1639,7 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
 
     <div class="brand-grid reveal" id="brandGrid">
       <div class="brand-stat">
-        <div class="brand-stat-value" data-count="5">0</div>
+        <div class="brand-stat-value" data-count="11">0</div>
         <div class="brand-stat-label">PROJECTS</div>
       </div>
       <div class="brand-stat">
