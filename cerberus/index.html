@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CERBERUS — Bug Bounty Automation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #050503;
+      --bg2:    #0a0906;
+      --bg3:    #0f0c07;
+      --amber:  #ffb300;
+      --amber2: #ff8c00;
+      --amber3: #ffd54f;
+      --white:  #ede8d8;
+      --dim:    #665a3a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Noise */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.5;
+    }
+
+    /* Scanlines */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.07) 2px,
+        rgba(0,0,0,0.07) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: rgba(5,5,3,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,179,0,0.1);
+    }
+
+    .nav-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--amber); }
+    .nav-back::before { content: '← '; }
+
+    .nav-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      color: var(--amber);
+      text-shadow: 0 0 20px rgba(255,179,0,0.5);
+    }
+
+    .nav-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 7rem 2rem 5rem;
+      position: relative;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(255,179,0,0.08) 0%, rgba(255,140,0,0.04) 40%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .ascii-art {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.35rem, 1.1vw, 0.65rem);
+      line-height: 1.2;
+      color: var(--amber);
+      text-shadow: 0 0 12px rgba(255,179,0,0.5);
+      white-space: pre;
+      margin-bottom: 2.5rem;
+      opacity: 0.9;
+    }
+
+    .hero-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      letter-spacing: 0.2em;
+      color: var(--amber);
+      text-shadow: 0 0 40px rgba(255,179,0,0.4), 0 0 80px rgba(255,179,0,0.15);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .hero-full {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.55rem, 1.2vw, 0.75rem);
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      text-transform: uppercase;
+      max-width: 700px;
+      line-height: 2;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-full span { color: var(--amber3); }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--amber);
+      text-shadow: 0 0 20px rgba(255,179,0,0.4);
+      display: block;
+    }
+
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    /* ── Common section ── */
+    .section {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .s-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.4em;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .s-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .s-desc {
+      color: #887760;
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    hr.div {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,179,0,0.12), transparent);
+      margin: 0 2rem;
+    }
+
+    /* ── Glass panel ── */
+    .glass {
+      background: rgba(255,179,0,0.03);
+      border: 1px solid rgba(255,179,0,0.1);
+      border-radius: 8px;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, var(--amber), rgba(255,179,0,0.1));
+    }
+
+    .phase {
+      position: relative;
+      padding: 1.5rem 1.5rem 1.5rem 2rem;
+      margin-bottom: 1rem;
+      background: rgba(255,179,0,0.02);
+      border: 1px solid rgba(255,179,0,0.07);
+      border-radius: 6px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .phase:hover {
+      border-color: rgba(255,179,0,0.25);
+      background: rgba(255,179,0,0.05);
+    }
+
+    .phase::before {
+      content: '';
+      position: absolute;
+      left: -2.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 12px rgba(255,179,0,0.8);
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .phase-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--dim);
+      letter-spacing: 0.1em;
+    }
+
+    .phase-icon { font-size: 1.1rem; }
+
+    .phase-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--amber3);
+    }
+
+    .phase-desc {
+      font-size: 0.9rem;
+      color: #887760;
+      line-height: 1.6;
+    }
+
+    /* ── Arsenal numbers ── */
+    .arsenal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .arsenal-card {
+      padding: 2rem;
+      text-align: center;
+      border-radius: 8px;
+      background: rgba(255,179,0,0.03);
+      border: 1px solid rgba(255,179,0,0.1);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .arsenal-card:hover {
+      border-color: rgba(255,179,0,0.3);
+      box-shadow: 0 0 30px rgba(255,179,0,0.08);
+    }
+
+    .arsenal-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--amber);
+      text-shadow: 0 0 30px rgba(255,179,0,0.5);
+      line-height: 1;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .arsenal-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    /* ── Features grid ── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .feat-card {
+      padding: 1.5rem;
+      background: rgba(255,179,0,0.02);
+      border: 1px solid rgba(255,179,0,0.08);
+      border-radius: 8px;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s;
+    }
+
+    .feat-card:hover {
+      border-color: rgba(255,179,0,0.25);
+      background: rgba(255,179,0,0.05);
+      transform: translateY(-2px);
+    }
+
+    .feat-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .feat-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--amber3);
+      margin-bottom: 0.5rem;
+    }
+
+    .feat-desc {
+      font-size: 0.88rem;
+      color: #887760;
+      line-height: 1.6;
+    }
+
+    /* ── Stack ── */
+    .stack-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .stack-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      letter-spacing: 0.1em;
+      background: rgba(255,179,0,0.06);
+      border: 1px solid rgba(255,179,0,0.2);
+      color: var(--amber3);
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .stack-tag:hover {
+      background: rgba(255,179,0,0.12);
+      border-color: rgba(255,179,0,0.4);
+    }
+
+    /* ── Install ── */
+    .install-block {
+      background: var(--bg2);
+      border: 1px solid rgba(255,179,0,0.12);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .install-bar {
+      background: rgba(255,179,0,0.06);
+      border-bottom: 1px solid rgba(255,179,0,0.1);
+      padding: 0.6rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+
+    .install-body {
+      padding: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 2.2;
+    }
+
+    .ln-prompt { color: var(--amber); }
+    .ln-cmd    { color: var(--white); }
+    .ln-comment{ color: var(--dim); }
+
+    /* ── CTA ── */
+    .cta-btn {
+      display: inline-block;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.5rem;
+      border-radius: 4px;
+      text-decoration: none;
+      background: transparent;
+      border: 2px solid var(--amber);
+      color: var(--amber);
+      transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+
+    .cta-btn:hover {
+      background: rgba(255,179,0,0.12);
+      box-shadow: 0 0 30px rgba(255,179,0,0.3);
+      transform: translateY(-2px);
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid rgba(255,179,0,0.06);
+    }
+
+    .footer-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: 0.3em;
+      color: var(--amber);
+      text-shadow: 0 0 20px rgba(255,179,0,0.4);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-back:hover { color: var(--amber); }
+
+    /* ── Scroll hint ── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.35;
+    }
+
+    .scroll-hint span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .scroll-arrow {
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(180deg, var(--amber), transparent);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:0.4; transform:scaleY(1); }
+      50%      { opacity:1;   transform:scaleY(1.15); }
+    }
+
+    @media (max-width: 768px) {
+      .arsenal-grid { grid-template-columns: 1fr; }
+      .section { padding: 4rem 1.25rem; }
+      .feat-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 1.25rem; }
+      .nav-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-back" href="/">PHANTOM Suite</a>
+    <div class="nav-logo">CERBERUS</div>
+    <span class="nav-badge">v2.0 // Bug Bounty Automation</span>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-glow"></div>
+
+    <pre class="ascii-art">
+  ██████╗███████╗██████╗ ██████╗ ███████╗██████╗ ██╗   ██╗███████╗
+ ██╔════╝██╔════╝██╔══██╗██╔══██╗██╔════╝██╔══██╗██║   ██║██╔════╝
+ ██║     █████╗  ██████╔╝██████╔╝█████╗  ██████╔╝██║   ██║███████╗
+ ██║     ██╔══╝  ██╔══██╗██╔══██╗██╔══╝  ██╔══██╗██║   ██║╚════██║
+ ╚██████╗███████╗██║  ██║██████╔╝███████╗██║  ██║╚██████╔╝███████║
+  ╚═════╝╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝</pre>
+
+    <p class="hero-tag">// Continuous Exploitation Recon & Bug Enumeration for Rapid Unified Scanning</p>
+    <h1 class="hero-title">CERBERUS</h1>
+    <p class="hero-full">
+      <span>C</span>ontinuous <span>E</span>xploitation <span>R</span>econ &amp; <span>B</span>ug<br/>
+      <span>E</span>numeration for <span>R</span>apid <span>U</span>nified <span>S</span>canning
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">47</span>
+        <span class="stat-label">Scripts</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">29+</span>
+        <span class="stat-label">Tools</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">10</span>
+        <span class="stat-label">Phases</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">AI</span>
+        <span class="stat-label">Triage</span>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- What It Does -->
+  <div class="section" id="pipeline">
+    <p class="s-tag">// Pipeline</p>
+    <h2 class="s-title">What It Does</h2>
+    <p class="s-desc">Ten fully automated phases take a target domain from zero to fully triaged vulnerability report.</p>
+
+    <div class="timeline">
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-num">PHASE 01</span>
+          <span class="phase-icon">🔍</span>
+          <span class="phase-name">Reconnaissance</span>
+        </div>
+        <p class="phase-desc">Subdomain enumeration via Subfinder, Amass, and Assetfinder. DNS resolution, live host detection, and scope validation.</p>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-num">PHASE 02</span>
+          <span class="phase-icon">🌐</span>
+          <span class="phase-name">Web Discovery</span>
+        </div>
+        <p class="phase-desc">HTTP probing with HTTPx. Technology fingerprinting, WAF detection, and response analysis across all discovered hosts.</p>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-num">PHASE 03</span>
+          <span class="phase-icon">🗺️</span>
+          <span class="phase-name">Content Mapping</span>
+        </div>
+        <p class="phase-desc">Directory and endpoint discovery via Feroxbuster. JavaScript analysis, API endpoint extraction, and sitemap crawling.</p>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-num">PHASE 04</span>
+          <span class="phase-icon">📸</span>
+          <span class="phase-name">Visual Recon</span>
+        </div>
+        <p class="phase-desc">Gowitness screenshots of all live targets. Visual clustering to identify attack surface patterns and login portals.</p>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-num">PHASE 05</span>
+          <span class="phase-icon">⚡</span>
+          <span class="phase-name">Parameter Discovery</span>
+        </div>
+        <p class="phase-desc">Wayback Machine mining, Gau URL extraction, and parameter fuzzing. Hidden parameter identification for injection testing.</p>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-num">PHASE 06</span>
+          <span class="phase-icon">💉</span>
+          <span class="phase-name">Vulnerability Scanning</span>
+        </div>
+        <p class="phase-desc">Nuclei template scanning across all discovered assets. CVE detection, misconfiguration checks, and known exploit testing.</p>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-num">PHASE 07</span>
+          <span class="phase-icon">🎯</span>
+          <span class="phase-name">Active Exploitation</span>
+        </div>
+        <p class="phase-desc">XSS, SQLi, SSRF, and IDOR testing with GPU-accelerated fuzzing. Custom wordlists and bypass techniques.</p>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-num">PHASE 08</span>
+          <span class="phase-icon">🤖</span>
+          <span class="phase-name">AI Triage</span>
+        </div>
+        <p class="phase-desc">Claude Haiku analyzes all findings. Severity scoring, false positive filtering, and exploit chain identification.</p>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-num">PHASE 09</span>
+          <span class="phase-icon">📊</span>
+          <span class="phase-name">Report Generation</span>
+        </div>
+        <p class="phase-desc">Automated HackerOne-ready reports with CVSS scores, reproduction steps, and remediation recommendations.</p>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="phase-num">PHASE 10</span>
+          <span class="phase-icon">🔄</span>
+          <span class="phase-name">Continuous Monitoring</span>
+        </div>
+        <p class="phase-desc">Scheduled rescans, diff analysis against previous results, and new asset alerting via n8n automation.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- The Arsenal -->
+  <div class="section" id="arsenal">
+    <p class="s-tag">// Numbers</p>
+    <h2 class="s-title">The Arsenal</h2>
+    <p class="s-desc">Built on a foundation of battle-tested tooling, custom scripts, and AI intelligence.</p>
+
+    <div class="arsenal-grid">
+      <div class="arsenal-card">
+        <span class="arsenal-num">47</span>
+        <span class="arsenal-label">Automation Scripts</span>
+      </div>
+      <div class="arsenal-card">
+        <span class="arsenal-num">29+</span>
+        <span class="arsenal-label">Integrated Tools</span>
+      </div>
+      <div class="arsenal-card">
+        <span class="arsenal-num">10</span>
+        <span class="arsenal-label">Pipeline Phases</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- Features -->
+  <div class="section" id="features">
+    <p class="s-tag">// Capabilities</p>
+    <h2 class="s-title">Features</h2>
+    <p class="s-desc">Every operator need, covered.</p>
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">📡</div>
+        <div class="feat-name">Scan Radar</div>
+        <p class="feat-desc">Real-time scan progress visualization. Watch targets fall as each phase completes.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🤖</div>
+        <div class="feat-name">AI Triage</div>
+        <p class="feat-desc">Claude Haiku AI cuts through noise. Automated severity scoring and false positive elimination.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📋</div>
+        <div class="feat-name">Auto Reports</div>
+        <p class="feat-desc">HackerOne-ready reports generated automatically. Professional format, CVSS scoring, PoC steps.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-name">GPU Fuzzing</div>
+        <p class="feat-desc">Hardware-accelerated payload fuzzing. Orders of magnitude faster than CPU-only approaches.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🖥️</div>
+        <div class="feat-name">Boot Sequence</div>
+        <p class="feat-desc">Cinematic startup sequence. Because your tools should feel as elite as your skills.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔔</div>
+        <div class="feat-name">n8n Automation</div>
+        <p class="feat-desc">Webhook-driven automation via n8n. New target alerts, scan scheduling, and Slack notifications.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <div class="feat-name">Live Dashboard</div>
+        <p class="feat-desc">Electron + React interface with real-time metrics, finding counts, and target status overview.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🐧</div>
+        <div class="feat-name">Kali WSL2 Engine</div>
+        <p class="feat-desc">Native Kali Linux tooling inside Windows. Full access to the security tool ecosystem.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎯</div>
+        <div class="feat-name">Scope Management</div>
+        <p class="feat-desc">Program-aware scanning. Automatically respects in-scope/out-of-scope boundaries for each target.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- The Stack -->
+  <div class="section" id="stack">
+    <p class="s-tag">// Technology</p>
+    <h2 class="s-title">The Stack</h2>
+    <p class="s-desc">Modern architecture built for performance and extensibility.</p>
+
+    <div class="stack-grid">
+      <span class="stack-tag">Electron</span>
+      <span class="stack-tag">React</span>
+      <span class="stack-tag">Tailwind CSS</span>
+      <span class="stack-tag">TypeScript</span>
+      <span class="stack-tag">Kali WSL2</span>
+      <span class="stack-tag">Claude Haiku</span>
+      <span class="stack-tag">n8n</span>
+      <span class="stack-tag">Nuclei</span>
+      <span class="stack-tag">Subfinder</span>
+      <span class="stack-tag">Amass</span>
+      <span class="stack-tag">HTTPx</span>
+      <span class="stack-tag">Feroxbuster</span>
+      <span class="stack-tag">Gowitness</span>
+      <span class="stack-tag">SQLMap</span>
+      <span class="stack-tag">Gau</span>
+      <span class="stack-tag">Waybackurls</span>
+      <span class="stack-tag">FFmpeg</span>
+      <span class="stack-tag">Bash</span>
+      <span class="stack-tag">Python</span>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- Get Started -->
+  <div class="section" id="install">
+    <p class="s-tag">// Installation</p>
+    <h2 class="s-title">Get Started</h2>
+    <p class="s-desc">Requires Windows 11 with WSL2 and Kali Linux. Node.js 18+ required.</p>
+
+    <div class="install-block">
+      <div class="install-bar">
+        <div class="dot" style="background:#ff5f57"></div>
+        <div class="dot" style="background:#febc2e"></div>
+        <div class="dot" style="background:#28c840"></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--dim);margin-left:0.5rem;">terminal</span>
+      </div>
+      <div class="install-body">
+        <div><span class="ln-comment"># Clone the repository</span></div>
+        <div><span class="ln-prompt">$</span> <span class="ln-cmd">git clone https://github.com/phantom-suite/cerberus</span></div>
+        <div><span class="ln-prompt">$</span> <span class="ln-cmd">cd cerberus</span></div>
+        <br/>
+        <div><span class="ln-comment"># Install dependencies</span></div>
+        <div><span class="ln-prompt">$</span> <span class="ln-cmd">npm install</span></div>
+        <br/>
+        <div><span class="ln-comment"># Run Kali setup script (installs all tools)</span></div>
+        <div><span class="ln-prompt">$</span> <span class="ln-cmd">wsl bash scripts/setup-kali.sh</span></div>
+        <br/>
+        <div><span class="ln-comment"># Launch CERBERUS</span></div>
+        <div><span class="ln-prompt">$</span> <span class="ln-cmd">npm run dev</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem; text-align:center;">
+      <a class="cta-btn" href="https://github.com/phantom-suite/cerberus">View on GitHub</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">CERBERUS</div>
+    <div class="footer-sub">Part of the PHANTOM Suite // Bug Bounty Automation</div>
+    <a class="footer-back" href="/">← Back to PHANTOM Suite</a>
+  </footer>
+
+</body>
+</html>

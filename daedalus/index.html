@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAEDALUS — Payload Builder & Exploit Workbench</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #060408;
+      --bg2:     #0b060f;
+      --bg3:     #100812;
+      --purple:  #b44fff;
+      --purple2: #8b2fc9;
+      --purple3: #d4a0ff;
+      --violet:  #7c3aed;
+      --white:   #e8dff5;
+      --dim:     #5a4a70;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Noise */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.45;
+    }
+
+    /* Scanlines */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.07) 2px,
+        rgba(0,0,0,0.07) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: rgba(6,4,8,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(180,79,255,0.12);
+    }
+
+    .nav-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--purple); }
+    .nav-back::before { content: '← '; }
+
+    .nav-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      color: var(--purple);
+      text-shadow: 0 0 20px rgba(180,79,255,0.5);
+    }
+
+    .nav-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 7rem 2rem 5rem;
+      position: relative;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      width: 700px;
+      height: 450px;
+      background: radial-gradient(ellipse, rgba(180,79,255,0.1) 0%, rgba(124,58,237,0.05) 40%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .myth-quote {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      color: var(--dim);
+      max-width: 580px;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+
+    .myth-quote::before { content: '" '; color: var(--purple); }
+    .myth-quote::after  { content: ' "'; color: var(--purple); }
+
+    .hero-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(3rem, 9vw, 7.5rem);
+      letter-spacing: 0.2em;
+      color: var(--purple);
+      text-shadow: 0 0 40px rgba(180,79,255,0.5), 0 0 80px rgba(180,79,255,0.2);
+      line-height: 1;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-tagline {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      color: var(--purple3);
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--dim);
+      max-width: 520px;
+      margin-bottom: 3rem;
+      line-height: 1.8;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--purple);
+      text-shadow: 0 0 20px rgba(180,79,255,0.4);
+      display: block;
+    }
+
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    /* ── Common section ── */
+    .section {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .s-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.4em;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .s-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .s-desc {
+      color: var(--dim);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    hr.div {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(180,79,255,0.15), transparent);
+      margin: 0 2rem;
+    }
+
+    /* ── Module cards ── */
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .module-card {
+      padding: 2rem;
+      background: rgba(180,79,255,0.03);
+      border: 1px solid rgba(180,79,255,0.1);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--purple), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .module-card:hover {
+      border-color: rgba(180,79,255,0.3);
+      background: rgba(180,79,255,0.06);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px -10px rgba(180,79,255,0.15);
+    }
+
+    .module-card:hover::before { opacity: 1; }
+
+    .module-glyph {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .module-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--purple3);
+      margin-bottom: 0.35rem;
+    }
+
+    .module-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .module-desc {
+      font-size: 0.92rem;
+      color: #8070a0;
+      line-height: 1.65;
+    }
+
+    .module-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .mtag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      padding: 0.2rem 0.6rem;
+      background: rgba(180,79,255,0.08);
+      border: 1px solid rgba(180,79,255,0.2);
+      border-radius: 3px;
+      color: var(--purple3);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── Academy ── */
+    .academy-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .academy-visual {
+      background: rgba(180,79,255,0.03);
+      border: 1px solid rgba(180,79,255,0.1);
+      border-radius: 8px;
+      padding: 2rem;
+    }
+
+    .xp-bar-wrap {
+      margin-bottom: 1.5rem;
+    }
+
+    .xp-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--dim);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.1em;
+    }
+
+    .xp-bar {
+      height: 4px;
+      background: rgba(180,79,255,0.12);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple2), var(--purple));
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(180,79,255,0.5);
+    }
+
+    .achievement-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .achievement {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.6rem 0.75rem;
+      background: rgba(180,79,255,0.05);
+      border: 1px solid rgba(180,79,255,0.12);
+      border-radius: 4px;
+      color: var(--purple3);
+    }
+
+    .achievement.locked {
+      opacity: 0.35;
+      filter: grayscale(1);
+    }
+
+    /* ── Features grid ── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .feat-card {
+      padding: 1.5rem;
+      background: rgba(180,79,255,0.02);
+      border: 1px solid rgba(180,79,255,0.08);
+      border-radius: 8px;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s;
+    }
+
+    .feat-card:hover {
+      border-color: rgba(180,79,255,0.25);
+      background: rgba(180,79,255,0.05);
+      transform: translateY(-2px);
+    }
+
+    .feat-icon { font-size: 1.4rem; margin-bottom: 0.75rem; }
+
+    .feat-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--purple3);
+      margin-bottom: 0.4rem;
+    }
+
+    .feat-desc {
+      font-size: 0.88rem;
+      color: var(--dim);
+      line-height: 1.6;
+    }
+
+    /* ── Stack ── */
+    .stack-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .stack-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      letter-spacing: 0.1em;
+      background: rgba(180,79,255,0.06);
+      border: 1px solid rgba(180,79,255,0.2);
+      color: var(--purple3);
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .stack-tag:hover {
+      background: rgba(180,79,255,0.12);
+      border-color: rgba(180,79,255,0.4);
+    }
+
+    /* ── CTA ── */
+    .cta-btn {
+      display: inline-block;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.5rem;
+      border-radius: 4px;
+      text-decoration: none;
+      background: transparent;
+      border: 2px solid var(--purple);
+      color: var(--purple);
+      transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+
+    .cta-btn:hover {
+      background: rgba(180,79,255,0.12);
+      box-shadow: 0 0 30px rgba(180,79,255,0.35);
+      transform: translateY(-2px);
+    }
+
+    /* ── Scroll hint ── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.35;
+    }
+
+    .scroll-hint span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--purple);
+    }
+
+    .scroll-arrow {
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(180deg, var(--purple), transparent);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:0.4; transform:scaleY(1); }
+      50%      { opacity:1;   transform:scaleY(1.15); }
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid rgba(180,79,255,0.06);
+    }
+
+    .footer-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: 0.3em;
+      color: var(--purple);
+      text-shadow: 0 0 20px rgba(180,79,255,0.4);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-back:hover { color: var(--purple); }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; }
+      .nav-badge { display: none; }
+      .section { padding: 4rem 1.25rem; }
+      .module-grid { grid-template-columns: 1fr; }
+      .academy-layout { grid-template-columns: 1fr; }
+      .feat-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-back" href="/">PHANTOM Suite</a>
+    <div class="nav-logo">DAEDALUS</div>
+    <span class="nav-badge">v2.0 // Payload Builder</span>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-glow"></div>
+
+    <p class="myth-quote">In Greek mythology, Daedalus was the master craftsman who built the Labyrinth — his genius unmatched, his creations inescapable.</p>
+
+    <p class="hero-tag">// The Master Craftsman</p>
+    <h1 class="hero-title">DAEDALUS</h1>
+    <p class="hero-tagline">Payload Builder &amp; Exploit Workbench</p>
+    <p class="hero-sub">
+      Craft, encode, and deploy payloads with surgical precision. Five specialist modules. Unlimited attack surface.
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">5</span>
+        <span class="stat-label">Modules</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">14</span>
+        <span class="stat-label">Encoders</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">WAF</span>
+        <span class="stat-label">Bypass Sim</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">XP</span>
+        <span class="stat-label">Academy</span>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- Modules -->
+  <div class="section" id="modules">
+    <p class="s-tag">// Architecture</p>
+    <h2 class="s-title">The Modules</h2>
+    <p class="s-desc">Five specialist workspaces, each mastering a domain of payload craft.</p>
+
+    <div class="module-grid">
+
+      <div class="module-card">
+        <div class="module-glyph">🔥</div>
+        <div class="module-name">FORGE</div>
+        <div class="module-role">Template Engine</div>
+        <p class="module-desc">Dynamic payload construction from a living template library. Context-aware generation for XSS, SQLi, SSRF, and more.</p>
+        <div class="module-tags">
+          <span class="mtag">XSS</span>
+          <span class="mtag">SQLi</span>
+          <span class="mtag">SSRF</span>
+          <span class="mtag">SSTI</span>
+          <span class="mtag">Templates</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-glyph">⚙️</div>
+        <div class="module-name">WORKSHOP</div>
+        <div class="module-role">Code Editor</div>
+        <p class="module-desc">Monaco-powered exploit editor with syntax highlighting, IntelliSense, and live execution sandbox. Your payload IDE.</p>
+        <div class="module-tags">
+          <span class="mtag">Monaco</span>
+          <span class="mtag">Sandbox</span>
+          <span class="mtag">IntelliSense</span>
+          <span class="mtag">Live Run</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-glyph">🗄️</div>
+        <div class="module-name">ARMORY</div>
+        <div class="module-role">Payload Database</div>
+        <p class="module-desc">Curated payload library organized by vulnerability class, bypass technique, and context. Searchable and filterable.</p>
+        <div class="module-tags">
+          <span class="mtag">Database</span>
+          <span class="mtag">Search</span>
+          <span class="mtag">Categories</span>
+          <span class="mtag">Export</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-glyph">🧪</div>
+        <div class="module-name">CRUCIBLE</div>
+        <div class="module-role">HTTP Testing</div>
+        <p class="module-desc">Burp Suite-style HTTP request builder. Intercept, replay, and fuzz requests with full control over headers and body.</p>
+        <div class="module-tags">
+          <span class="mtag">HTTP</span>
+          <span class="mtag">Replay</span>
+          <span class="mtag">Fuzzer</span>
+          <span class="mtag">Intercept</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-glyph">🌀</div>
+        <div class="module-name">LABYRINTH</div>
+        <div class="module-role">Encoding Chains</div>
+        <p class="module-desc">Chain 14 real encoders in sequence. Build multi-layer obfuscation to bypass filters, WAFs, and detection engines.</p>
+        <div class="module-tags">
+          <span class="mtag">Base64</span>
+          <span class="mtag">URL Encode</span>
+          <span class="mtag">HTML Entities</span>
+          <span class="mtag">Unicode</span>
+          <span class="mtag">Chains</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- Academy -->
+  <div class="section" id="academy">
+    <p class="s-tag">// Gamification</p>
+    <h2 class="s-title">The Academy</h2>
+    <p class="s-desc">Level up your skills through structured challenges and a competitive progression system.</p>
+
+    <div class="academy-layout">
+      <div class="academy-text">
+        <p style="color:#8070a0; line-height:1.8; margin-bottom:1.25rem;">
+          DAEDALUS features a built-in gamified learning system. Solve challenges, earn XP, unlock achievements, and track your progress through the ranks of payload craft mastery.
+        </p>
+        <p style="color:#8070a0; line-height:1.8; margin-bottom:1.25rem;">
+          From beginner XSS injections to advanced WAF bypass chains — every challenge is a step toward mastery. Streak bonuses reward consistency. Leaderboards track the elite.
+        </p>
+        <p style="color: var(--purple3); font-family:'JetBrains Mono',monospace; font-size:0.8rem;">
+          Every payload is a lesson. Every bypass, a breakthrough.
+        </p>
+      </div>
+
+      <div class="academy-visual">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--dim); letter-spacing:0.2em; margin-bottom:1.25rem; text-transform:uppercase;">Operator Profile</div>
+
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--purple2),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1.25rem;box-shadow:0 0 20px rgba(180,79,255,0.4);">🔧</div>
+          <div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.85rem;font-weight:700;color:var(--purple3);letter-spacing:0.1em;">CRAFTSMAN LVL 7</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--dim);">4,280 / 5,000 XP</div>
+          </div>
+        </div>
+
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-label">
+            <span>Level Progress</span>
+            <span style="color:var(--purple3);">85%</span>
+          </div>
+          <div class="xp-bar">
+            <div class="xp-fill" style="width:85%"></div>
+          </div>
+        </div>
+
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-label">
+            <span>XSS Mastery</span>
+            <span style="color:var(--purple3);">92%</span>
+          </div>
+          <div class="xp-bar">
+            <div class="xp-fill" style="width:92%"></div>
+          </div>
+        </div>
+
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-label">
+            <span>WAF Bypass</span>
+            <span style="color:var(--purple3);">67%</span>
+          </div>
+          <div class="xp-bar">
+            <div class="xp-fill" style="width:67%"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.25rem;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.6rem;">Achievements</div>
+          <div class="achievement-list">
+            <div class="achievement">🏆 &nbsp;Labyrinth Builder — Completed 50 challenges</div>
+            <div class="achievement">🔥 &nbsp;7-Day Streak — Consistency rewarded</div>
+            <div class="achievement">⚡ &nbsp;WAF Slayer — Bypassed 10 filter types</div>
+            <div class="achievement locked">🌀 &nbsp;Architect — Unlock at Level 10</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- Features -->
+  <div class="section" id="features">
+    <p class="s-tag">// Capabilities</p>
+    <h2 class="s-title">Features</h2>
+    <p class="s-desc">Every weapon a craftsman needs.</p>
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🛡️</div>
+        <div class="feat-name">WAF Bypass Simulator</div>
+        <p class="feat-desc">Test payloads against simulated WAF rule sets. Identify bypass vectors before live deployment.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔗</div>
+        <div class="feat-name">14 Real Encoders</div>
+        <p class="feat-desc">Base64, URL, HTML entities, Unicode escapes, hex, octal, ROT13, and more — chainable in sequence.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🗃️</div>
+        <div class="feat-name">Interactive SQL Builder</div>
+        <p class="feat-desc">Visual query builder for constructing SQLi payloads. Supports UNION, BLIND, TIME-based, and error-based.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔥</div>
+        <div class="feat-name">Streak System</div>
+        <p class="feat-desc">Daily challenge streaks with XP multipliers. The longer the streak, the harder the challenge, the greater the reward.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📦</div>
+        <div class="feat-name">Payload Export</div>
+        <p class="feat-desc">Export payloads as text, JSON, or directly to clipboard. One-click copy for rapid deployment.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎯</div>
+        <div class="feat-name">Context Detection</div>
+        <p class="feat-desc">Paste HTML, JS, or SQL context — DAEDALUS suggests the optimal payload variants automatically.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📚</div>
+        <div class="feat-name">Reference Library</div>
+        <p class="feat-desc">Built-in vulnerability reference. OWASP Top 10, CVE patterns, and bypass cheatsheets at your fingertips.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌀</div>
+        <div class="feat-name">Encoding Chains</div>
+        <p class="feat-desc">Multi-layer encoding pipelines. Stack encoders visually and watch the output transform in real time.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- The Stack -->
+  <div class="section" id="stack">
+    <p class="s-tag">// Technology</p>
+    <h2 class="s-title">The Stack</h2>
+    <p class="s-desc">Precision engineering beneath the surface.</p>
+
+    <div class="stack-grid">
+      <span class="stack-tag">Electron</span>
+      <span class="stack-tag">React</span>
+      <span class="stack-tag">Tailwind CSS</span>
+      <span class="stack-tag">TypeScript</span>
+      <span class="stack-tag">Monaco Editor</span>
+      <span class="stack-tag">Vite</span>
+      <span class="stack-tag">Node.js</span>
+      <span class="stack-tag">SQLite</span>
+      <span class="stack-tag">electron-vite</span>
+    </div>
+
+    <div style="margin-top:2.5rem;text-align:center;">
+      <a class="cta-btn" href="https://github.com/phantom-suite/daedalus">View on GitHub</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">DAEDALUS</div>
+    <div class="footer-sub">Part of the PHANTOM Suite // Payload Builder &amp; Exploit Workbench</div>
+    <a class="footer-back" href="/">← Back to PHANTOM Suite</a>
+  </footer>
+
+</body>
+</html>

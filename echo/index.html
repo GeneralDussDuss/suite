@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECHO — Steganography & Data Concealment Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:    #08030a;
+      --bg2:   #0d040f;
+      --bg3:   #120510;
+      --pink:  #ff2d78;
+      --pink2: #c91060;
+      --pink3: #ff80ab;
+      --rose:  #ff6ec7;
+      --white: #f5e0ee;
+      --dim:   #6b3a55;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Noise */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.45;
+    }
+
+    /* Scanlines */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.07) 2px,
+        rgba(0,0,0,0.07) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: rgba(8,3,10,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,45,120,0.12);
+    }
+
+    .nav-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--pink); }
+    .nav-back::before { content: '← '; }
+
+    .nav-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1rem;
+      letter-spacing: 0.4em;
+      color: var(--pink);
+      text-shadow: 0 0 20px rgba(255,45,120,0.6);
+    }
+
+    .nav-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 7rem 2rem 5rem;
+      position: relative;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(255,45,120,0.1) 0%, rgba(201,16,96,0.05) 40%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .myth-quote {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      max-width: 600px;
+      line-height: 1.9;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+
+    .myth-quote::before { content: '" '; color: var(--pink); }
+    .myth-quote::after  { content: ' "'; color: var(--pink); }
+
+    .hero-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(5rem, 14vw, 11rem);
+      letter-spacing: 0.3em;
+      color: var(--pink);
+      text-shadow: 0 0 40px rgba(255,45,120,0.5), 0 0 80px rgba(255,45,120,0.2), 0 0 120px rgba(255,45,120,0.08);
+      line-height: 1;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-tagline {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: clamp(0.9rem, 2.2vw, 1.25rem);
+      color: var(--pink3);
+      letter-spacing: 0.12em;
+      margin-bottom: 1rem;
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--dim);
+      max-width: 500px;
+      margin-bottom: 3rem;
+      line-height: 1.8;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--pink);
+      text-shadow: 0 0 20px rgba(255,45,120,0.5);
+      display: block;
+    }
+
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    /* ── Common section ── */
+    .section {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .s-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.4em;
+      color: var(--pink);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .s-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .s-desc {
+      color: var(--dim);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    hr.div {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,45,120,0.15), transparent);
+      margin: 0 2rem;
+    }
+
+    /* ── Module grid ── */
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .module-card {
+      padding: 2rem;
+      background: rgba(255,45,120,0.03);
+      border: 1px solid rgba(255,45,120,0.1);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--pink), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .module-card:hover {
+      border-color: rgba(255,45,120,0.3);
+      background: rgba(255,45,120,0.06);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px -10px rgba(255,45,120,0.15);
+    }
+
+    .module-card:hover::before { opacity: 1; }
+
+    .module-glyph { font-size: 2rem; margin-bottom: 1rem; }
+
+    .module-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--pink3);
+      margin-bottom: 0.35rem;
+    }
+
+    .module-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .module-desc {
+      font-size: 0.92rem;
+      color: #80405a;
+      line-height: 1.65;
+    }
+
+    .module-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .mtag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      padding: 0.2rem 0.6rem;
+      background: rgba(255,45,120,0.08);
+      border: 1px solid rgba(255,45,120,0.2);
+      border-radius: 3px;
+      color: var(--pink3);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── Academy / CTF ── */
+    .ctf-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .pixel-demo {
+      background: var(--bg2);
+      border: 1px solid rgba(255,45,120,0.12);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .pixel-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .pixel-grid {
+      display: grid;
+      grid-template-columns: repeat(16, 1fr);
+      gap: 2px;
+      margin-bottom: 1rem;
+    }
+
+    .pixel {
+      aspect-ratio: 1;
+      border-radius: 1px;
+    }
+
+    /* LSB visualization rows */
+    .lsb-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .lsb-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--dim);
+      width: 60px;
+      flex-shrink: 0;
+    }
+
+    .lsb-bits {
+      display: flex;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .bit {
+      width: 14px; height: 14px;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      font-weight: 700;
+    }
+
+    .bit-1 { background: rgba(255,45,120,0.5); color: var(--pink3); }
+    .bit-0 { background: rgba(255,45,120,0.08); color: var(--dim); }
+    .bit-h { background: rgba(255,45,120,0.9); color: #fff; box-shadow: 0 0 6px rgba(255,45,120,0.6); }
+
+    .challenge-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 1.25rem;
+    }
+
+    .challenge {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255,45,120,0.04);
+      border: 1px solid rgba(255,45,120,0.1);
+      border-radius: 5px;
+      transition: border-color 0.2s;
+    }
+
+    .challenge:hover { border-color: rgba(255,45,120,0.3); }
+
+    .ch-icon { font-size: 1rem; }
+
+    .ch-info { flex: 1; }
+
+    .ch-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--pink3);
+      letter-spacing: 0.08em;
+    }
+
+    .ch-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--dim);
+      letter-spacing: 0.1em;
+    }
+
+    .ch-xp {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--pink);
+      font-weight: 700;
+    }
+
+    /* ── Features grid ── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .feat-card {
+      padding: 1.5rem;
+      background: rgba(255,45,120,0.02);
+      border: 1px solid rgba(255,45,120,0.08);
+      border-radius: 8px;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s;
+    }
+
+    .feat-card:hover {
+      border-color: rgba(255,45,120,0.25);
+      background: rgba(255,45,120,0.05);
+      transform: translateY(-2px);
+    }
+
+    .feat-icon { font-size: 1.4rem; margin-bottom: 0.75rem; }
+
+    .feat-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--pink3);
+      margin-bottom: 0.4rem;
+    }
+
+    .feat-desc {
+      font-size: 0.88rem;
+      color: var(--dim);
+      line-height: 1.6;
+    }
+
+    /* ── Stack ── */
+    .stack-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .stack-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      letter-spacing: 0.1em;
+      background: rgba(255,45,120,0.06);
+      border: 1px solid rgba(255,45,120,0.2);
+      color: var(--pink3);
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .stack-tag:hover {
+      background: rgba(255,45,120,0.12);
+      border-color: rgba(255,45,120,0.4);
+    }
+
+    /* ── CTA ── */
+    .cta-btn {
+      display: inline-block;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.5rem;
+      border-radius: 4px;
+      text-decoration: none;
+      background: transparent;
+      border: 2px solid var(--pink);
+      color: var(--pink);
+      transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+
+    .cta-btn:hover {
+      background: rgba(255,45,120,0.12);
+      box-shadow: 0 0 30px rgba(255,45,120,0.35);
+      transform: translateY(-2px);
+    }
+
+    /* ── Scroll hint ── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.35;
+    }
+
+    .scroll-hint span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--pink);
+    }
+
+    .scroll-arrow {
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(180deg, var(--pink), transparent);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:0.4; transform:scaleY(1); }
+      50%      { opacity:1;   transform:scaleY(1.15); }
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid rgba(255,45,120,0.06);
+    }
+
+    .footer-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: 0.5em;
+      color: var(--pink);
+      text-shadow: 0 0 25px rgba(255,45,120,0.5);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-back {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-back:hover { color: var(--pink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; }
+      .nav-badge { display: none; }
+      .section { padding: 4rem 1.25rem; }
+      .module-grid { grid-template-columns: 1fr; }
+      .ctf-layout { grid-template-columns: 1fr; }
+      .feat-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-back" href="/">PHANTOM Suite</a>
+    <div class="nav-logo">ECHO</div>
+    <span class="nav-badge">v2.0 // Steganography Suite</span>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-glow"></div>
+
+    <p class="myth-quote">Echo was the nymph cursed to only repeat others' words — her true voice hidden within existing sounds, invisible to those who could not listen closely enough.</p>
+
+    <p class="hero-tag">// The Hidden Voice</p>
+    <h1 class="hero-title">ECHO</h1>
+    <p class="hero-tagline">Steganography &amp; Data Concealment Suite</p>
+    <p class="hero-sub">
+      Hide messages in plain sight. Detect the invisible. Analyze what the eye cannot see.
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">5</span>
+        <span class="stat-label">Modules</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">LSB</span>
+        <span class="stat-label">Encoding</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">8</span>
+        <span class="stat-label">Detection Tests</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">CTF</span>
+        <span class="stat-label">Challenges</span>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- Modules -->
+  <div class="section" id="modules">
+    <p class="s-tag">// Architecture</p>
+    <h2 class="s-title">The Modules</h2>
+    <p class="s-desc">Five specialist chambers, each mastering a dimension of data concealment.</p>
+
+    <div class="module-grid">
+
+      <div class="module-card">
+        <div class="module-glyph">🤫</div>
+        <div class="module-name">WHISPER</div>
+        <div class="module-role">Encode</div>
+        <p class="module-desc">Embed secret messages into images using LSB steganography. Choose bit depth, channel, and encryption layer before writing.</p>
+        <div class="module-tags">
+          <span class="mtag">LSB</span>
+          <span class="mtag">Image Encode</span>
+          <span class="mtag">Encrypt</span>
+          <span class="mtag">PNG/BMP</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-glyph">👂</div>
+        <div class="module-name">LISTEN</div>
+        <div class="module-role">Decode</div>
+        <p class="module-desc">Extract hidden data from carrier images. Automatic detection of encoding parameters, hash verification, and decryption.</p>
+        <div class="module-tags">
+          <span class="mtag">Extract</span>
+          <span class="mtag">Auto-detect</span>
+          <span class="mtag">Decrypt</span>
+          <span class="mtag">Hash Check</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-glyph">🔦</div>
+        <div class="module-name">REVEAL</div>
+        <div class="module-role">Detect</div>
+        <p class="module-desc">8-test statistical analysis pipeline. Chi-squared tests, histogram anomalies, LSB randomness, and entropy analysis detect hidden payloads.</p>
+        <div class="module-tags">
+          <span class="mtag">Chi-squared</span>
+          <span class="mtag">Entropy</span>
+          <span class="mtag">Histogram</span>
+          <span class="mtag">LSB Analysis</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-glyph">🔬</div>
+        <div class="module-name">INSPECT</div>
+        <div class="module-role">Forensics</div>
+        <p class="module-desc">Deep image forensics. Hex viewer, metadata extraction, EXIF analysis, color channel isolation, and image comparison tools.</p>
+        <div class="module-tags">
+          <span class="mtag">Hex Viewer</span>
+          <span class="mtag">EXIF</span>
+          <span class="mtag">Metadata</span>
+          <span class="mtag">Channel Split</span>
+        </div>
+      </div>
+
+      <div class="module-card">
+        <div class="module-glyph">🔒</div>
+        <div class="module-name">CHAMBER</div>
+        <div class="module-role">Encryption</div>
+        <p class="module-desc">Pre-encode encryption layer. AES-256, XOR, and custom cipher support before LSB embedding for maximum data security.</p>
+        <div class="module-tags">
+          <span class="mtag">AES-256</span>
+          <span class="mtag">XOR</span>
+          <span class="mtag">Custom Cipher</span>
+          <span class="mtag">Key Gen</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- Academy / CTF -->
+  <div class="section" id="academy">
+    <p class="s-tag">// CTF Training</p>
+    <h2 class="s-title">The Academy</h2>
+    <p class="s-desc">CTF-style challenges built into the tool. Find the hidden message. Earn the flag.</p>
+
+    <div class="ctf-layout">
+
+      <div>
+        <p style="color:#80405a; line-height:1.8; margin-bottom:1.25rem;">
+          ECHO's Academy presents real steganography CTF challenges in an interactive learning environment. Each challenge hides data inside actual image files — your job is to find it.
+        </p>
+        <p style="color:#80405a; line-height:1.8; margin-bottom:1.25rem;">
+          Challenges escalate from basic LSB extraction to multi-layer encoded images with encryption, noise injection, and red herrings. The pixel grid visualization shows you exactly where bits are being modified.
+        </p>
+        <p style="color: var(--pink3); font-family:'JetBrains Mono',monospace; font-size:0.78rem; margin-bottom:2rem;">
+          The secret was always there. You just needed to look closer.
+        </p>
+
+        <div class="challenge-list">
+          <div class="challenge">
+            <span class="ch-icon">🟢</span>
+            <div class="ch-info">
+              <div class="ch-name">Whisper in the Noise</div>
+              <div class="ch-meta">BEGINNER • LSB Extraction</div>
+            </div>
+            <span class="ch-xp">+150 XP</span>
+          </div>
+          <div class="challenge">
+            <span class="ch-icon">🟡</span>
+            <div class="ch-info">
+              <div class="ch-name">The Encrypted Pixel</div>
+              <div class="ch-meta">INTERMEDIATE • LSB + AES</div>
+            </div>
+            <span class="ch-xp">+400 XP</span>
+          </div>
+          <div class="challenge">
+            <span class="ch-icon">🟠</span>
+            <div class="ch-info">
+              <div class="ch-name">Red Herring Gallery</div>
+              <div class="ch-meta">ADVANCED • Multi-layer + Decoy</div>
+            </div>
+            <span class="ch-xp">+750 XP</span>
+          </div>
+          <div class="challenge">
+            <span class="ch-icon">🔴</span>
+            <div class="ch-info">
+              <div class="ch-name">Echo's Curse</div>
+              <div class="ch-meta">EXPERT • Unknown method</div>
+            </div>
+            <span class="ch-xp">+2000 XP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pixel-demo">
+        <div class="pixel-title">LSB Visualization — Carrier Image</div>
+
+        <!-- Pixel grid simulation -->
+        <div class="pixel-grid">
+          <!-- Row 1: "clean" pixels -->
+          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.28)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.22)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.30)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.26)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.24)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.27)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.23)"></div>
+          <!-- Row 1: "encoded" pixels — slightly brighter -->
+          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.62);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.28)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.24)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.26)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.29)"></div>
+          <!-- rows 2-5 -->
+          <div class="pixel" style="background:rgba(255,45,120,0.22)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.27)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.62);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.24)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.26)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.28)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.23)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.30)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.62);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.27)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.24)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.26)"></div>
+          <!-- row 3 -->
+          <div class="pixel" style="background:rgba(255,45,120,0.28)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.22)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.27)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.24)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.62);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.23)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.29)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.26)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.60);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.25)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.28)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.22)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.30)"></div>
+          <div class="pixel" style="background:rgba(255,45,120,0.62);box-shadow:0 0 4px rgba(255,45,120,0.5)"></div>
+        </div>
+
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--dim);margin-bottom:1rem;">
+          <span style="color:var(--pink)">■</span> LSB-modified pixels &nbsp;&nbsp;
+          <span style="background:rgba(255,45,120,0.25);display:inline-block;width:10px;height:10px;border-radius:1px;vertical-align:middle;"></span> Unmodified
+        </div>
+
+        <!-- Bit breakdown -->
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.2em;margin-bottom:0.75rem;text-transform:uppercase;">Bit Plane — Channel R</div>
+
+        <div class="lsb-row">
+          <div class="lsb-label">Pixel 8:</div>
+          <div class="lsb-bits">
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-0">0</div>
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-0">0</div>
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-0">0</div>
+            <div class="bit bit-h">1</div>
+          </div>
+        </div>
+        <div class="lsb-row">
+          <div class="lsb-label">Pixel 10:</div>
+          <div class="lsb-bits">
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-0">0</div>
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-0">0</div>
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-0">0</div>
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-h">0</div>
+          </div>
+        </div>
+        <div class="lsb-row">
+          <div class="lsb-label">Pixel 14:</div>
+          <div class="lsb-bits">
+            <div class="bit bit-0">0</div>
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-0">0</div>
+            <div class="bit bit-0">0</div>
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-1">1</div>
+            <div class="bit bit-h">0</div>
+          </div>
+        </div>
+
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--dim);margin-top:0.75rem;">
+          LSB sequence: <span style="color:var(--pink3)">1 0 0 ...</span> → <span style="color:var(--pink)">"H"</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- Features -->
+  <div class="section" id="features">
+    <p class="s-tag">// Capabilities</p>
+    <h2 class="s-title">Features</h2>
+    <p class="s-desc">The full forensic toolkit for steganography operators.</p>
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🔢</div>
+        <div class="feat-name">LSB Encoding</div>
+        <p class="feat-desc">Least Significant Bit encoding across R, G, B channels. Configurable bit depth — 1 to 4 bits per channel.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">✅</div>
+        <div class="feat-name">Hash Verification</div>
+        <p class="feat-desc">SHA-256 hash embedded alongside payload. Verify data integrity on extraction. Detect tampering automatically.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔍</div>
+        <div class="feat-name">Hex Viewer</div>
+        <p class="feat-desc">Full hex dump of carrier images. Navigate byte-by-byte, highlight regions, and annotate suspicious patterns.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🧪</div>
+        <div class="feat-name">8 Detection Tests</div>
+        <p class="feat-desc">Chi-squared, entropy analysis, histogram anomaly, RS analysis, LSB randomness, and four more statistical tests.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🖼️</div>
+        <div class="feat-name">Image Comparison</div>
+        <p class="feat-desc">Side-by-side original vs. carrier comparison. Pixel-level diff visualization highlights exactly where data was embedded.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔐</div>
+        <div class="feat-name">Pre-Encryption</div>
+        <p class="feat-desc">Encrypt your payload with AES-256 before embedding. The stego layer is just one line of defense.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <div class="feat-name">Histogram Analysis</div>
+        <p class="feat-desc">Color channel histograms with before/after overlay. Visual detection of distribution anomalies caused by encoding.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎓</div>
+        <div class="feat-name">CTF Challenges</div>
+        <p class="feat-desc">Graded CTF-style challenges from beginner to expert. Real embedded images. Real extraction. Real flags.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div" />
+
+  <!-- The Stack -->
+  <div class="section" id="stack">
+    <p class="s-tag">// Technology</p>
+    <h2 class="s-title">The Stack</h2>
+    <p class="s-desc">Signal processing and image forensics under the hood.</p>
+
+    <div class="stack-grid">
+      <span class="stack-tag">Electron</span>
+      <span class="stack-tag">React</span>
+      <span class="stack-tag">Tailwind CSS</span>
+      <span class="stack-tag">TypeScript</span>
+      <span class="stack-tag">Sharp</span>
+      <span class="stack-tag">Canvas API</span>
+      <span class="stack-tag">Web Crypto API</span>
+      <span class="stack-tag">Node.js</span>
+      <span class="stack-tag">Vite</span>
+      <span class="stack-tag">electron-vite</span>
+    </div>
+
+    <div style="margin-top:2.5rem;text-align:center;">
+      <a class="cta-btn" href="https://github.com/phantom-suite/echo">View on GitHub</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">ECHO</div>
+    <div class="footer-sub">Part of the PHANTOM Suite // Steganography &amp; Data Concealment</div>
+    <a class="footer-back" href="/">← Back to PHANTOM Suite</a>
+  </footer>
+
+</body>
+</html>
