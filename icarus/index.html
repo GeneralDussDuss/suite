@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ICARUS — USB Payload Platform</title>
-<meta name="description" content="Integrated Covert Attack & Rubber-duck Unified System. A complete USB HID payload platform with 65+ DuckyScript payloads, visual builder, deployment simulator, and encoder.">
+<meta name="description" content="Integrated Covert Attack & Rubber-duck Unified System. A complete USB HID payload platform with 178 DuckyScript payloads, visual builder, deployment simulator, encoder, and Flipper Zero BadBT integration.">
 <meta property="og:title" content="ICARUS — USB Payload Platform">
-<meta property="og:description" content="Fly too close to the sun. 65+ DuckyScript payloads, visual builder, deployment simulator, and encoder.">
+<meta property="og:description" content="Fly too close to the sun. 178 DuckyScript payloads, visual builder, deployment simulator, encoder, and Flipper Zero BadBT sync.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://emperorbadussy.github.io/icarus/">
 <meta name="twitter:card" content="summary">
@@ -1645,7 +1645,7 @@ body.portal-out {
     </div>
     <h1 class="hero-title" id="heroTitle"></h1>
     <p class="hero-tagline">Fly too close to the sun.</p>
-    <p class="hero-sub">A complete USB HID payload platform with 65+ DuckyScript payloads, visual builder, deployment simulator, and encoder.</p>
+    <p class="hero-sub">A complete USB HID payload platform with 178 DuckyScript payloads, visual builder, deployment simulator, encoder, and Flipper Zero BadBT integration.</p>
     <div class="hero-buttons">
       <a href="https://github.com/EmperorBadussy/ICARUS" class="btn-primary" target="_blank">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
@@ -1691,6 +1691,10 @@ body.portal-out {
             <div class="mock-sidebar-item">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
               SUN
+            </div>
+            <div class="mock-sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              DEPLOY
             </div>
           </div>
 
@@ -1799,7 +1803,7 @@ body.portal-out {
           <span class="mock-status-dot"></span>
           <span class="mock-status-text">FORGE &mdash; Payload Builder &bull; wifi_grabber.ds</span>
           <span class="mock-status-badge">DuckyScript 1.0</span>
-          <span class="mock-payload-count">65+ payloads</span>
+          <span class="mock-payload-count">178 payloads</span>
         </div>
       </div>
     </div>
@@ -1816,7 +1820,7 @@ body.portal-out {
   <div class="section-inner">
     <div class="section-label reveal">01 // THE ASCENT</div>
     <h2 class="section-title reveal">From Script to Strike</h2>
-    <p class="section-desc reveal">Four stages of flight. From raw DuckyScript to deployed payload. ICARUS handles the full lifecycle.</p>
+    <p class="section-desc reveal">Five stages of flight. From raw DuckyScript to deployed payload &mdash; including Flipper Zero sync. ICARUS handles the full lifecycle.</p>
 
     <div class="steps-grid">
       <!-- FORGE -->
@@ -1866,6 +1870,18 @@ body.portal-out {
           <div class="step-desc">Flash to USB Rubber Ducky or compatible HID device. One-click deploy with status feedback.</div>
         </div>
       </div>
+
+      <!-- FLIPPER DEPLOY -->
+      <div class="step-card reveal-scale" style="transition-delay:0.45s">
+        <div class="step-preview">
+          <canvas class="step-canvas" data-step="flipper"></canvas>
+          <div class="step-number">05</div>
+        </div>
+        <div class="step-info">
+          <div class="step-name">FLIPPER SYNC</div>
+          <div class="step-desc">One-click payload deployment to Flipper Zero SD card. Auto-converts DuckyScript to Flipper BadBT format, organizes by category.</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1884,7 +1900,7 @@ body.portal-out {
         <div class="feature-icon">
           <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
-        <div class="feature-title">65+ DUCKYSCRIPT PAYLOADS</div>
+        <div class="feature-title">178 DUCKYSCRIPT PAYLOADS</div>
         <div class="feature-text">Pre-built payloads for recon, exfiltration, persistence, reverse shells, WiFi grabbers, and more.</div>
       </div>
 
@@ -1943,6 +1959,14 @@ body.portal-out {
         <div class="feature-title">CONFIGURABLE ENGINE</div>
         <div class="feature-text">Customize injection speed, default delays, keyboard layout, and output paths. Everything tunable.</div>
       </div>
+
+      <div class="feature-card reveal" style="transition-delay:0.45s">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="feature-title">FLIPPER ZERO DEPLOY</div>
+        <div class="feature-text">One-click payload deployment to Flipper Zero SD card. Auto-converts DuckyScript to Flipper BadBT format, organizes by category.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -1966,6 +1990,8 @@ body.portal-out {
       <div class="tech-badge"><span class="tech-dot"></span>Webhook API</div>
       <div class="tech-badge"><span class="tech-dot"></span>Binary Encoder</div>
       <div class="tech-badge"><span class="tech-dot"></span>Cross-Platform</div>
+      <div class="tech-badge"><span class="tech-dot"></span>Flipper Zero</div>
+      <div class="tech-badge"><span class="tech-dot"></span>BadBT / BLE HID</div>
     </div>
 
     <div class="arch-diagram reveal">
@@ -1979,7 +2005,7 @@ body.portal-out {
       </div>
       <div class="arch-row"><span class="arch-arrow">&#x2193;</span></div>
       <div class="arch-row">
-        <div class="arch-box">Payload Library (65+)</div>
+        <div class="arch-box">Payload Library (178)</div>
         <div class="arch-box">Visual Builder</div>
       </div>
       <div class="arch-row"><span class="arch-arrow">&#x2193;</span></div>
@@ -1987,6 +2013,8 @@ body.portal-out {
         <div class="arch-box">Deployment Simulator</div>
         <span class="arch-arrow">&rarr;</span>
         <div class="arch-box highlight">USB HID Injection</div>
+        <span class="arch-arrow">&rarr;</span>
+        <div class="arch-box highlight">Flipper Zero Deploy</div>
       </div>
     </div>
   </div>
