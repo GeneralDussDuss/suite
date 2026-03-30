@@ -110,9 +110,6 @@ scrcpy --display-id=2
 
 # Adjust mouse pointer speed
 adb shell settings put system pointer_speed 7
-
-# Alternative DeX toggle (broadcast method)
-adb shell am broadcast -a com.samsung.android.desktopmode.action.CHANGE_MODE --ei mode 1
 ```
 
 ---
@@ -166,7 +163,6 @@ Usage: `dex-wireless.bat 192.168.1.42`
 
 **"DeX doesn't activate, just shows normal phone screen"**
 - Make sure the ADB command ran: `adb shell settings get global force_desktop_mode_on_external_displays` should return `1`
-- Try the broadcast method: `adb shell am broadcast -a com.samsung.android.desktopmode.action.CHANGE_MODE --ei mode 1`
 - Try `scrcpy --display-id=2` after triggering DeX
 - Restart scrcpy after running the ADB commands
 
@@ -181,8 +177,8 @@ Usage: `dex-wireless.bat 192.168.1.42`
 - If persistent, switch to USB — it's always more stable
 
 **"Audio not forwarding"**
-- Audio forwarding requires scrcpy 2.0+. Add `--audio-codec=opus` for better audio quality.
-- Some Samsung phones need: `adb shell appops set com.genymobile.scrcpy PROJECT_MEDIA allow`
+- Audio forwarding requires scrcpy 2.0+. It uses opus codec by default — no extra flags needed.
+- Make sure you're on scrcpy 2.0 or later: `scrcpy --version`
 
 **"Lag/stuttering over wireless"**
 - Lower bitrate: `--video-bit-rate=4M`
