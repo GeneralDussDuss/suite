@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HERMES — The Messenger Between Realms</title>
+<meta name="description" content="Samsung DeX Bridge for Windows 11. One-click DeX launcher for the PHANTOM suite.">
+<meta name="theme-color" content="#00F0FF">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%2300F0FF'/><stop offset='100%25' stop-color='%23FF2E97'/></linearGradient></defs><rect rx='15' width='100' height='100' fill='%23000'/><text x='50' y='72' font-size='60' text-anchor='middle' fill='url(%23g)' font-family='sans-serif' font-weight='bold'>H</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   HERMES — OLED CYBERPUNK GRADIENT
+   Samsung DeX Bridge Control Panel
+   The Messenger Between Realms
+   ============================================ */
+
+:root {
+  --bg-void: #000000;
+  --bg-surface: #060A0F;
+  --bg-raised: #0A1018;
+  --bg-input: #0E1620;
+  --cyan-dim: #0A2A30;
+  --cyan-muted: #0E4A55;
+  --cyan-core: #00F0FF;
+  --cyan-bright: #40F8FF;
+  --magenta-dim: #300A1A;
+  --magenta-muted: #551030;
+  --magenta-core: #FF2E97;
+  --magenta-bright: #FF5CB0;
+  --gradient-main: linear-gradient(135deg, #00F0FF, #FF2E97);
+  --gradient-subtle: linear-gradient(135deg, rgba(0,240,255,0.1), rgba(255,46,151,0.1));
+  --gradient-border: linear-gradient(135deg, rgba(0,240,255,0.4), rgba(255,46,151,0.4));
+  --glow-cyan: 0 0 20px rgba(0,240,255,0.3);
+  --glow-magenta: 0 0 20px rgba(255,46,151,0.3);
+  --glow-gradient: 0 0 20px rgba(0,240,255,0.25), 0 0 40px rgba(255,46,151,0.15);
+  --glow-text: 0 0 8px rgba(0,240,255,0.5);
+  --text-primary: #E8F0F8;
+  --text-secondary: #8A9BB0;
+  --text-dim: #4A5A6A;
+  --success: #00FF88;
+  --warning: #FFAA00;
+  --error: #FF3355;
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: 150ms var(--ease-smooth);
+  --transition-normal: 300ms var(--ease-smooth);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-weight: 400;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.top-bar {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 12px rgba(0,240,255,0.4));
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 16px;
+  border: 1px solid;
+  transition: all var(--transition-normal);
+}
+
+.status-pill.disconnected { border-color: rgba(255,51,85,0.3); background: rgba(255,51,85,0.08); color: var(--error); }
+.status-pill.connected { border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.08); color: var(--success); }
+.status-pill.wireless { border-color: rgba(255,170,0,0.3); background: rgba(255,170,0,0.08); color: var(--warning); }
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-pill.connected .status-dot,
+.status-pill.wireless .status-dot {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 currentColor; }
+  50% { opacity: 0.6; box-shadow: 0 0 8px 2px currentColor; }
+}
+
+.main-panel {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid rgba(0,240,255,0.1);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-normal);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-subtle);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+}
+
+.card:hover::before { opacity: 1; }
+.card:hover { border-color: rgba(0,240,255,0.2); }
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.device-info { display: flex; align-items: center; gap: 16px; }
+
+.device-ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.device-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 2px;
+  background: var(--gradient-main);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.device-ring.connected::before {
+  animation: ring-pulse 3s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 4px rgba(0,240,255,0.3)); }
+  50% { opacity: 0.7; filter: drop-shadow(0 0 12px rgba(255,46,151,0.5)); }
+}
+
+.device-ring .icon { font-size: 1.5rem; }
+.device-details { flex: 1; }
+
+.device-name { font-family: var(--font-body); font-size: 1.2rem; font-weight: 600; color: var(--text-primary); }
+.device-meta { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px; }
+.device-badges { display: flex; gap: 8px; margin-top: 8px; }
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  border-radius: 100px;
+  border: 1px solid;
+}
+
+.badge.usb { border-color: rgba(0,240,255,0.3); color: var(--cyan-core); background: rgba(0,240,255,0.08); }
+.badge.wifi { border-color: rgba(255,170,0,0.3); color: var(--warning); background: rgba(255,170,0,0.08); }
+.badge.battery { border-color: rgba(0,255,136,0.3); color: var(--success); background: rgba(0,255,136,0.08); }
+.badge.battery.low { border-color: rgba(255,51,85,0.3); color: var(--error); background: rgba(255,51,85,0.08); }
+
+.settings-grid { display: grid; gap: 16px; }
+
+.setting-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.setting-label { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); letter-spacing: 0.05em; min-width: 100px; }
+.setting-value { font-family: var(--font-mono); font-size: 0.75rem; color: var(--cyan-core); min-width: 50px; text-align: right; }
+
+select, input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--bg-input);
+  border: 1px solid rgba(0,240,255,0.15);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  transition: border-color var(--transition-fast);
+}
+
+select { padding: 8px 12px; cursor: pointer; flex: 1; max-width: 200px; }
+select:focus { outline: none; border-color: var(--cyan-core); }
+select option { background: var(--bg-raised); color: var(--text-primary); }
+
+input[type="range"] { flex: 1; max-width: 200px; height: 6px; border-radius: 3px; border: none; cursor: pointer; }
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--gradient-main);
+  cursor: pointer;
+  box-shadow: var(--glow-gradient);
+}
+
+.toggle-group { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,240,255,0.15); }
+
+.toggle-btn {
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background: var(--bg-input);
+  color: var(--text-dim);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.toggle-btn.active { background: linear-gradient(135deg, rgba(0,240,255,0.2), rgba(255,46,151,0.2)); color: var(--text-primary); }
+.toggle-btn:hover:not(.active) { color: var(--text-secondary); }
+
+.screen-toggle { display: flex; align-items: center; gap: 12px; }
+
+.switch { position: relative; width: 44px; height: 24px; cursor: pointer; }
+.switch input { display: none; }
+
+.switch .slider {
+  position: absolute; inset: 0;
+  background: var(--bg-input);
+  border: 1px solid rgba(0,240,255,0.15);
+  border-radius: 12px;
+  transition: all var(--transition-normal);
+}
+
+.switch .slider::before {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  left: 2px; bottom: 2px;
+  background: var(--text-dim);
+  border-radius: 50%;
+  transition: all var(--transition-normal);
+}
+
+.switch input:checked + .slider {
+  background: linear-gradient(135deg, rgba(0,240,255,0.3), rgba(255,46,151,0.3));
+  border-color: rgba(0,240,255,0.4);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(20px);
+  background: var(--gradient-main);
+  box-shadow: var(--glow-gradient);
+}
+
+.launch-btn {
+  width: 100%;
+  padding: 18px 32px;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #000;
+  background: var(--gradient-main);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  text-transform: uppercase;
+}
+
+.launch-btn::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: var(--gradient-main);
+  border-radius: 14px;
+  z-index: -1;
+  filter: blur(16px);
+  opacity: 0.5;
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; filter: blur(16px); }
+  50% { opacity: 0.6; filter: blur(24px); }
+}
+
+.launch-btn:hover { transform: translateY(-1px); box-shadow: var(--glow-gradient); }
+.launch-btn:active { transform: translateY(0); }
+
+.launch-btn.active {
+  background: linear-gradient(135deg, rgba(0,255,136,0.2), rgba(0,255,136,0.1));
+  color: var(--success);
+  border: 1px solid rgba(0,255,136,0.3);
+}
+
+.launch-btn.active::before { background: rgba(0,255,136,0.15); }
+.launch-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.quick-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+.quick-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border: 1px solid rgba(0,240,255,0.12);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.quick-btn:hover { border-color: rgba(0,240,255,0.3); color: var(--cyan-core); background: rgba(0,240,255,0.05); }
+
+.presets-bar {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.presets-bar select { flex: 1; }
+
+.preset-btn {
+  padding: 8px 14px;
+  border: 1px solid rgba(0,240,255,0.15);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.preset-btn:hover { border-color: rgba(0,240,255,0.3); color: var(--cyan-core); }
+
+.error-banner {
+  width: 100%;
+  max-width: 600px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: rgba(255,51,85,0.1);
+  border: 1px solid rgba(255,51,85,0.3);
+  color: var(--error);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.error-banner.visible { display: block; }
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.visible { display: flex; }
+
+.modal {
+  background: var(--bg-raised);
+  border: 1px solid rgba(0,240,255,0.2);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal h3 {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.modal input[type="text"] {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-input);
+  border: 1px solid rgba(0,240,255,0.2);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+.modal input[type="text"]:focus { outline: none; border-color: var(--cyan-core); }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cyan-muted); }
+</style>
+</head>
+<body>
+
+<div class="error-banner" id="errorBanner"></div>
+
+<div class="top-bar">
+  <div class="wordmark">HERMES</div>
+  <div class="subtitle">The Messenger Between Realms</div>
+  <div class="status-pill disconnected" id="statusPill">
+    <span class="status-dot"></span>
+    <span id="statusText">DISCONNECTED</span>
+  </div>
+</div>
+
+<div class="main-panel">
+  <div class="card" id="connectionCard">
+    <div class="card-title">CONNECTION</div>
+    <div class="device-info">
+      <div class="device-ring" id="deviceRing">
+        <span class="icon">&#x1F4F1;</span>
+      </div>
+      <div class="device-details">
+        <div class="device-name" id="deviceName">No Device</div>
+        <div class="device-meta" id="deviceMeta">Waiting for connection...</div>
+        <div class="device-badges" id="deviceBadges"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">DISPLAY</div>
+    <div class="settings-grid">
+      <div class="setting-row">
+        <span class="setting-label">Resolution</span>
+        <select id="resolution">
+          <option value="1280x720">1280 x 720</option>
+          <option value="1920x1080" selected>1920 x 1080</option>
+          <option value="2560x1440">2560 x 1440</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">DPI</span>
+        <input type="range" id="dpi" min="160" max="320" value="240" step="10">
+        <span class="setting-value" id="dpiValue">240</span>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">FPS</span>
+        <div class="toggle-group">
+          <button class="toggle-btn" data-fps="30">30</button>
+          <button class="toggle-btn active" data-fps="60">60</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">Bitrate</span>
+        <input type="range" id="bitrate" min="2" max="20" value="16" step="1">
+        <span class="setting-value" id="bitrateValue">16M</span>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">Phone Screen</span>
+        <div class="screen-toggle">
+          <span class="setting-value" id="screenLabel">OFF</span>
+          <label class="switch">
+            <input type="checkbox" id="screenOff" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">SESSION</div>
+    <button class="launch-btn" id="launchBtn" disabled>LAUNCH DEX</button>
+    <div class="quick-actions">
+      <button class="quick-btn" id="btnWireless">WIRELESS</button>
+      <button class="quick-btn" id="btnRestartAdb">RESTART ADB</button>
+      <button class="quick-btn" id="btnToggleScreen">TOGGLE SCREEN</button>
+      <button class="quick-btn" id="btnKillSession">KILL SESSION</button>
+    </div>
+  </div>
+</div>
+
+<div class="presets-bar">
+  <select id="presetSelect">
+    <option value="">-- Presets --</option>
+  </select>
+  <button class="preset-btn" id="btnSavePreset">SAVE</button>
+  <button class="preset-btn" id="btnDeletePreset">DELETE</button>
+</div>
+
+<div class="modal-overlay" id="wirelessModal">
+  <div class="modal">
+    <h3>WIRELESS CONNECTION</h3>
+    <p style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-secondary);margin-bottom:12px;">
+      Enter your phone's IP address. Find it at Settings &gt; About Phone &gt; Status &gt; IP Address.
+    </p>
+    <input type="text" id="wirelessIp" placeholder="192.168.1.xxx">
+    <div class="modal-actions">
+      <button class="preset-btn" id="btnCancelWireless">CANCEL</button>
+      <button class="launch-btn" id="btnConnectWireless" style="padding:10px 24px;font-size:0.8rem;">CONNECT</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================
+   HERMES — Control Panel Logic
+   All DOM manipulation uses safe methods
+   (createElement, textContent, appendChild)
+   ============================================ */
+
+const API = '';
+let state = { connected: false, scrcpyRunning: false, fps: 60, config: null };
+
+// --- API Helpers ---
+
+async function api(endpoint, method, body) {
+  method = method || 'GET';
+  const opts = { method: method, headers: {} };
+  if (body) {
+    opts.headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(body);
+  }
+  try {
+    const res = await fetch(API + endpoint, opts);
+    return await res.json();
+  } catch (e) {
+    showError('Bridge connection lost. Is hermes-bridge.py running?');
+    return null;
+  }
+}
+
+// --- DOM Helpers ---
+
+function clearChildren(el) {
+  while (el.firstChild) { el.removeChild(el.firstChild); }
+}
+
+function createBadge(text, className) {
+  var badge = document.createElement('span');
+  badge.className = 'badge ' + className;
+  badge.textContent = text;
+  return badge;
+}
+
+function createOption(value, text) {
+  var opt = document.createElement('option');
+  opt.value = value;
+  opt.textContent = text;
+  return opt;
+}
+
+// --- Status Polling ---
+
+async function pollStatus() {
+  var data = await api('/api/status');
+  if (!data) return;
+
+  state.connected = data.connected;
+  state.scrcpyRunning = data.scrcpyRunning;
+
+  var pill = document.getElementById('statusPill');
+  var statusText = document.getElementById('statusText');
+  pill.className = 'status-pill';
+
+  if (!data.connected) {
+    pill.classList.add('disconnected');
+    statusText.textContent = 'DISCONNECTED';
+  } else if (data.connectionType === 'wireless') {
+    pill.classList.add('wireless');
+    statusText.textContent = 'WIRELESS';
+  } else {
+    pill.classList.add('connected');
+    statusText.textContent = 'CONNECTED';
+  }
+
+  var ring = document.getElementById('deviceRing');
+  ring.className = data.connected ? 'device-ring connected' : 'device-ring';
+
+  document.getElementById('deviceName').textContent = data.connected ? data.model : 'No Device';
+  document.getElementById('deviceMeta').textContent = data.connected
+    ? 'Android ' + data.androidVersion + (data.ip ? ' \u00b7 ' + data.ip : '')
+    : 'Waiting for connection...';
+
+  // Badges — safe DOM construction
+  var badges = document.getElementById('deviceBadges');
+  clearChildren(badges);
+  if (data.connected) {
+    var typeClass = data.connectionType === 'wireless' ? 'wifi' : 'usb';
+    var typeLabel = data.connectionType === 'wireless' ? 'WiFi' : 'USB';
+    badges.appendChild(createBadge(typeLabel, typeClass));
+
+    if (data.battery !== null && data.battery !== undefined) {
+      var batClass = 'battery' + (data.battery < 20 ? ' low' : '');
+      badges.appendChild(createBadge(data.battery + '%', batClass));
+    }
+
+    if (data.scrcpyRunning) {
+      badges.appendChild(createBadge('DeX ACTIVE', 'usb'));
+    }
+  }
+
+  // Launch button state
+  var launchBtn = document.getElementById('launchBtn');
+  if (data.scrcpyRunning) {
+    launchBtn.textContent = 'DEX ACTIVE \u2014 DISCONNECT';
+    launchBtn.classList.add('active');
+    launchBtn.disabled = false;
+  } else if (data.connected) {
+    launchBtn.textContent = 'LAUNCH DEX';
+    launchBtn.classList.remove('active');
+    launchBtn.disabled = false;
+  } else {
+    launchBtn.textContent = 'LAUNCH DEX';
+    launchBtn.classList.remove('active');
+    launchBtn.disabled = true;
+  }
+
+  // Smart bitrate default
+  if (!state.config) {
+    var bitrateSlider = document.getElementById('bitrate');
+    if (data.connectionType === 'wireless' && bitrateSlider.value === '16') {
+      bitrateSlider.value = 8;
+      document.getElementById('bitrateValue').textContent = '8M';
+    }
+  }
+
+  hideError();
+}
+
+// --- UI Bindings ---
+
+function getParams() {
+  return {
+    resolution: document.getElementById('resolution').value,
+    dpi: parseInt(document.getElementById('dpi').value),
+    fps: state.fps,
+    bitrate: document.getElementById('bitrate').value + 'M',
+    screenOff: document.getElementById('screenOff').checked,
+    mode: state.connected && document.getElementById('statusText').textContent === 'WIRELESS' ? 'wireless' : 'usb'
+  };
+}
+
+document.getElementById('launchBtn').addEventListener('click', async function() {
+  if (state.scrcpyRunning) {
+    await api('/api/disconnect', 'POST');
+  } else {
+    var result = await api('/api/launch', 'POST', getParams());
+    if (result && !result.success) { showError(result.message); }
+  }
+  setTimeout(pollStatus, 500);
+});
+
+document.getElementById('dpi').addEventListener('input', function(e) {
+  document.getElementById('dpiValue').textContent = e.target.value;
+});
+
+document.getElementById('bitrate').addEventListener('input', function(e) {
+  document.getElementById('bitrateValue').textContent = e.target.value + 'M';
+});
+
+document.querySelectorAll('[data-fps]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('[data-fps]').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    state.fps = parseInt(btn.dataset.fps);
+  });
+});
+
+document.getElementById('screenOff').addEventListener('change', function(e) {
+  document.getElementById('screenLabel').textContent = e.target.checked ? 'OFF' : 'ON';
+});
+
+document.getElementById('btnRestartAdb').addEventListener('click', async function() {
+  await api('/api/adb/restart', 'POST');
+  setTimeout(pollStatus, 2000);
+});
+
+document.getElementById('btnKillSession').addEventListener('click', async function() {
+  await api('/api/disconnect', 'POST');
+  setTimeout(pollStatus, 500);
+});
+
+document.getElementById('btnToggleScreen').addEventListener('click', function() {
+  var cb = document.getElementById('screenOff');
+  cb.checked = !cb.checked;
+  cb.dispatchEvent(new Event('change'));
+});
+
+document.getElementById('btnWireless').addEventListener('click', function() {
+  document.getElementById('wirelessModal').classList.add('visible');
+});
+
+document.getElementById('btnCancelWireless').addEventListener('click', function() {
+  document.getElementById('wirelessModal').classList.remove('visible');
+});
+
+document.getElementById('btnConnectWireless').addEventListener('click', async function() {
+  var ip = document.getElementById('wirelessIp').value.trim();
+  if (!ip) return;
+  var result = await api('/api/adb/wireless', 'POST', { ip: ip });
+  document.getElementById('wirelessModal').classList.remove('visible');
+  if (result && !result.success) { showError(result.message); }
+  setTimeout(pollStatus, 3000);
+});
+
+// --- Presets ---
+
+async function loadPresets() {
+  var data = await api('/api/settings');
+  if (!data) return;
+  state.config = data;
+
+  var select = document.getElementById('presetSelect');
+  clearChildren(select);
+  select.appendChild(createOption('', '-- Presets --'));
+  (data.presets || []).forEach(function(p, i) {
+    select.appendChild(createOption(String(i), p.name));
+  });
+
+  if (data.lastUsed) { applySettings(data.lastUsed); }
+}
+
+function applySettings(s) {
+  if (s.resolution) document.getElementById('resolution').value = s.resolution;
+  if (s.dpi) {
+    document.getElementById('dpi').value = s.dpi;
+    document.getElementById('dpiValue').textContent = s.dpi;
+  }
+  if (s.fps) {
+    state.fps = s.fps;
+    document.querySelectorAll('[data-fps]').forEach(function(b) {
+      b.classList.toggle('active', parseInt(b.dataset.fps) === s.fps);
+    });
+  }
+  if (s.bitrate) {
+    var val = parseInt(s.bitrate);
+    document.getElementById('bitrate').value = val;
+    document.getElementById('bitrateValue').textContent = val + 'M';
+  }
+  if (s.screenOff !== undefined) {
+    document.getElementById('screenOff').checked = s.screenOff;
+    document.getElementById('screenLabel').textContent = s.screenOff ? 'OFF' : 'ON';
+  }
+}
+
+document.getElementById('presetSelect').addEventListener('change', function(e) {
+  var idx = e.target.value;
+  if (idx === '' || !state.config) return;
+  applySettings(state.config.presets[parseInt(idx)]);
+});
+
+document.getElementById('btnSavePreset').addEventListener('click', async function() {
+  var name = prompt('Preset name:');
+  if (!name) return;
+  var params = getParams();
+  params.name = name;
+  if (!state.config) state.config = { lastUsed: params, presets: [] };
+  state.config.presets.push(params);
+  await api('/api/settings', 'PUT', state.config);
+  loadPresets();
+});
+
+document.getElementById('btnDeletePreset').addEventListener('click', async function() {
+  var idx = document.getElementById('presetSelect').value;
+  if (idx === '' || !state.config) return;
+  state.config.presets.splice(parseInt(idx), 1);
+  await api('/api/settings', 'PUT', state.config);
+  loadPresets();
+});
+
+// --- Error Display ---
+
+function showError(msg) {
+  var banner = document.getElementById('errorBanner');
+  banner.textContent = msg;
+  banner.classList.add('visible');
+}
+
+function hideError() {
+  document.getElementById('errorBanner').classList.remove('visible');
+}
+
+// --- Init ---
+
+loadPresets();
+pollStatus();
+setInterval(pollStatus, 3000);
+</script>
+</body>
+</html>
