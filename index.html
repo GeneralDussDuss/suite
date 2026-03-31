@@ -665,6 +665,28 @@ body::after {
 .project-card.icarus .project-cta { color: #FDE047; border-color: #EAB308; }
 .project-card.icarus:hover .project-cta { background: rgba(234,179,8,0.2); box-shadow: 0 0 12px rgba(234,179,8,0.3); }
 
+/* HERMES card */
+.project-card.hermes { border-color: rgba(0,240,255,0.3); }
+.project-card.hermes::before {
+  background: conic-gradient(from var(--angle), transparent 30%, #00F0FF, #FF2E97, transparent 70%);
+  animation: rotateBorder 3s linear infinite;
+}
+.project-card.hermes::after { background: radial-gradient(circle, rgba(0,240,255,0.08) 0%, transparent 60%); }
+.project-card.hermes:hover {
+  border-color: #00F0FF;
+  box-shadow: 0 0 30px rgba(0,240,255,0.4), 0 0 80px rgba(255,46,151,0.2), 0 25px 80px rgba(0,0,0,0.6), inset 0 0 30px rgba(0,240,255,0.1);
+}
+.project-card.hermes .project-icon { background: rgba(0,240,255,0.15); border-color: rgba(0,240,255,0.3); }
+.project-card.hermes:hover .project-icon { box-shadow: 0 0 25px rgba(0,240,255,0.5); border-color: #00F0FF; transform: scale(1.1); }
+.project-card.hermes .project-icon svg { stroke: #00F0FF; }
+.project-card.hermes .project-name { color: #00F0FF; text-shadow: 0 0 8px rgba(0,240,255,0.5); }
+.project-card.hermes:hover .project-name { text-shadow: 0 0 12px rgba(0,240,255,0.8), 0 0 30px rgba(255,46,151,0.3); }
+.project-card.hermes .project-tagline { color: #00F0FF; }
+.project-card.hermes .project-tech span { color: rgba(0,240,255,0.7); border-color: rgba(0,240,255,0.2); }
+.project-card.hermes:hover .project-tech span { color: rgba(0,240,255,1); border-color: rgba(0,240,255,0.5); background: rgba(0,240,255,0.1); }
+.project-card.hermes .project-cta { color: #00F0FF; border-color: #00F0FF; }
+.project-card.hermes:hover .project-cta { background: rgba(0,240,255,0.2); box-shadow: 0 0 12px rgba(0,240,255,0.3); }
+
 .scroll-indicator {
   position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
   z-index: 2; animation: scroll-bounce 2s infinite;
@@ -1568,6 +1590,24 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
           <span>Academy</span>
         </div>
         <div class="project-cta">EXPLORE ICARUS</div>
+      </a>
+
+      <!-- HERMES -->
+      <a href="hermes/" class="project-card hermes">
+        <canvas class="card-canvas" data-type="hermes"></canvas>
+        <div class="project-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 14v6M9 20h6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 20l2-2M19 20l-2-2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div class="project-name">HERMES</div>
+        <div class="project-tagline">The Messenger Between Realms</div>
+        <div class="project-desc">Samsung DeX bridge for Windows 11. One-click DeX launcher via scrcpy.</div>
+        <div class="project-tech">
+          <span>DeX</span>
+          <span>scrcpy</span>
+          <span>Windows 11</span>
+          <span>Bridge</span>
+        </div>
+        <div class="project-cta">EXPLORE HERMES</div>
       </a>
     </div>
   </div>
