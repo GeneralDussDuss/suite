@@ -34,6 +34,12 @@ def find_executable(name):
         candidate = p / f"{name}.exe"
         if candidate.exists():
             return str(candidate)
+    # Search WinGet packages (scrcpy installs to a versioned subdirectory)
+    import glob
+    winget_pkgs = os.environ.get("LOCALAPPDATA", "") + "/Microsoft/WinGet/Packages"
+    matches = glob.glob(f"{winget_pkgs}/*{name}*/**/{name}.exe", recursive=True)
+    if matches:
+        return matches[0]
     return None
 
 SCRCPY_PATH = find_executable("scrcpy")
