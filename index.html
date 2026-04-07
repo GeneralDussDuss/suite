@@ -687,6 +687,27 @@ body::after {
 .project-card.hermes .project-cta { color: #00F0FF; border-color: #00F0FF; }
 .project-card.hermes:hover .project-cta { background: rgba(0,240,255,0.2); box-shadow: 0 0 12px rgba(0,240,255,0.3); }
 
+.project-card.nexus { border-color: rgba(238,34,144,0.3); }
+.project-card.nexus::before {
+  background: conic-gradient(from var(--angle), transparent 30%, #EE2290, #F967A8, transparent 70%);
+  animation: rotateBorder 3s linear infinite;
+}
+.project-card.nexus::after { background: radial-gradient(circle, rgba(238,34,144,0.08) 0%, transparent 60%); }
+.project-card.nexus:hover {
+  border-color: #EE2290;
+  box-shadow: 0 0 30px rgba(238,34,144,0.4), 0 0 80px rgba(249,103,168,0.2), 0 25px 80px rgba(0,0,0,0.6), inset 0 0 30px rgba(238,34,144,0.1);
+}
+.project-card.nexus .project-icon { background: rgba(238,34,144,0.15); border-color: rgba(238,34,144,0.3); }
+.project-card.nexus:hover .project-icon { box-shadow: 0 0 25px rgba(238,34,144,0.5); border-color: #EE2290; transform: scale(1.1); }
+.project-card.nexus .project-icon svg { stroke: #F967A8; }
+.project-card.nexus .project-name { color: #F967A8; text-shadow: 0 0 8px rgba(249,103,168,0.5); }
+.project-card.nexus:hover .project-name { text-shadow: 0 0 12px rgba(249,103,168,0.8), 0 0 30px rgba(238,34,144,0.3); }
+.project-card.nexus .project-tagline { color: #F967A8; }
+.project-card.nexus .project-tech span { color: rgba(249,103,168,0.7); border-color: rgba(238,34,144,0.2); }
+.project-card.nexus:hover .project-tech span { color: rgba(249,103,168,1); border-color: rgba(238,34,144,0.5); background: rgba(238,34,144,0.1); }
+.project-card.nexus .project-cta { color: #F967A8; border-color: #EE2290; }
+.project-card.nexus:hover .project-cta { background: rgba(238,34,144,0.2); box-shadow: 0 0 12px rgba(238,34,144,0.3); }
+
 .scroll-indicator {
   position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
   z-index: 2; animation: scroll-bounce 2s infinite;
@@ -1608,6 +1629,23 @@ body.portal-out { animation: portalWarp 0.6s ease-in forwards; }
           <span>Bridge</span>
         </div>
         <div class="project-cta">EXPLORE HERMES</div>
+      </a>
+
+      <a href="https://github.com/GeneralDussDuss/nexus" class="project-card nexus" target="_blank">
+        <canvas class="card-canvas" data-type="nexus"></canvas>
+        <div class="project-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div class="project-name">NEXUS</div>
+        <div class="project-tagline">The Command Center</div>
+        <div class="project-desc">Central API hub for the entire suite. Real-time event bus, bounty pipeline, and cyberpunk dashboard.</div>
+        <div class="project-tech">
+          <span>Elysia</span>
+          <span>Bun</span>
+          <span>WebSocket</span>
+          <span>SQLite</span>
+        </div>
+        <div class="project-cta">EXPLORE NEXUS</div>
       </a>
     </div>
   </div>
